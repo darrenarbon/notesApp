@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <title>noted. </title>
+        <script src="js/core/jQuery.js"></script>
+        <script src="js/core/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+
+        <link href="css/main.css" rel="stylesheet" />
+
+        <!-- Include the core AngularJS library -->
+        <script src="js/core/angularJS.js"></script>
+        <script src="js/core/angular-route.min.js"></script>
+
+        <!-- Include SQL Lite for date handling -->
+        <script src="js/core/sqlite-plugin.js"></script>
+        <script src="js/core/angular-filter.js"></script>
+
+    </head>
+    <body ng-app="NotesApp">
+    <div ng-controller="HomeController">
+        <a href="#!/notes">
+            <div class="topBar">
+                noted.
+                <div class="menuButton">
+                    <img src="img/menu.png" class="menuIcon" ng-click="showHideMenu()">
+                </div>
+            </div>
+        </a>
+
+        <div ng-view class="contentDiv">
+
+        </div>
+
+        <div class="menu" id="menu" ng-show="showMenu">
+            <div class="menuOption">
+                Show All <input type="checkbox" ng-change="showHideItems()" ng-model="allItems" class="catBox">
+            </div>
+            <a href="#!/categories" ng-click="showHideMenu()">
+                <div class="menuOption">
+                    Edit Categories
+                </div>
+            </a>
+            <div class="menuOption">
+                Sort By:
+            </div>
+            <div class="menuSubOption" ng-click="changeSort('date_added_numeric')">
+                Date Added
+            </div>
+            <div class="menuSubOption" ng-click="changeSort('date_due_numeric')">
+                Date Due
+            </div>
+            <div class="menuSubOption" ng-click="changeSort('starred')">
+                Priority
+            </div>
+            <div class="menuSubOption" ng-click="changeSort('categories_id')">
+                Category
+            </div>
+            <div class="menuSubOption" ng-click="changeSort('status_id')">
+                Status
+            </div>
+            <div class="menuOption" ng-click="resetDataBase()">
+                <img src="img/warning.png" width="40px" height="40px"> Reset data <img src="img/warning.png" width="40px" height="40px">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modules -->
+    <script src="js/app.js"></script>
+
+    <!-- Controllers -->
+    <script src="js/controllers/ListController.js"></script>
+    <script src="js/controllers/MemoController.js"></script>
+    <script src="js/controllers/NewNoteController.js"></script>
+    <script src="js/controllers/HomeController.js"></script>
+    <script src="js/controllers/CategoryController.js"></script>
+
+    <!-- Directives -->
+    <script src="js/directives/note.js"></script>
+
+    <!-- extras -->
+    <script src="js/services/dbCalls.js"></script>
+    <script src="js/services/pipes.js"></script>
+    <script src="js/services/checkDates.js"></script>
+    <script src="js/services/camera.js"></script>
+    <script src="js/services/MenuOptions.js"></script>
+    <script src="js/services/speech.js"></script>
+    <script src="js/services/notes.js"></script>
+
+    <script type="text/javascript" src="cordova.js"></script>
+    </body>
+</html>

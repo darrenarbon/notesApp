@@ -1,0 +1,244 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    overflow: scroll;
+}
+
+a {
+    color: inherit
+}
+a:hover {
+    text-decoration: none;
+    color: inherit
+}
+
+.topBar {
+    height: 50px;
+    width: 100%;
+    background-color: cornflowerblue;
+    font-size: 40px;
+    line-height: 50px;
+    padding-left: 10px;
+    padding-right: 10px;
+    box-shadow: 0px 3px 3px #A0A0A0;
+    position: fixed;
+    top:0px;
+    z-index: 999;
+}
+
+.contentDiv {
+    margin-top: 60px;
+    width: 100%;
+}
+
+body {
+    background-color: #eaebed;
+}
+
+.note {
+    width: calc(100% - 15px);
+    background-color: white;
+    border-bottom: 1px solid #eaebed;
+    padding-left: 10px;
+    margin: 10px;
+    box-shadow: 0 0 3px #8d8d8e;
+    border-top-left-radius: 0.2em;
+    border-bottom-left-radius: 0.2em;
+    color:cornflowerblue;
+}
+
+.noteList {
+    height: 50px;
+    font-size: 20px;
+    cursor: pointer;
+
+}
+
+.noteList:hover {
+    background-color: #ccdefc;
+    color: cornflowerblue;
+    text-decoration: none;
+}
+
+.noteDueToday {
+    background-color: #f7e4c5;
+}
+
+.noteOverdue {
+    background-color: #f9bfbd;
+}
+
+.dateText {
+    color: red;
+    display: block;
+    font-size: 12px;
+    clear: left;
+    float: left
+}
+
+.underTitle {
+    border: 0;
+    height: 2px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 1));
+}
+
+.input-group-prepend {
+    width: 100px
+}
+
+.input-group-text {
+    width: 100%
+}
+
+.deleteIconDiv {
+    display: block;
+    float:right;
+    height: 100%;
+    padding-right: 0px;
+    text-align: right;
+}
+
+.iconBar {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: right;
+    margin-right: 2px;
+}
+
+.noteText {
+    float:left;
+    width: calc(100% - 125px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.addNewButton {
+    bottom: 20px;
+    right: 20px;
+    position: fixed;
+    height: 50px;
+    width:50px;
+    background-color: cornflowerblue;
+    border-radius: 50%;
+    font-size: 30px;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    color: white;
+    box-shadow: 3px 3px 10px #A0A0A0;
+}
+
+.priorityButton {
+    bottom: 20px;
+    left: 20px;
+    position: fixed;
+    height: 50px;
+    width:50px;
+    background-color: cornflowerblue;
+    border-radius: 50%;
+    font-size: 30px;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    color: white;
+    box-shadow: 3px 3px 10px #A0A0A0;
+    cursor: pointer;
+}
+
+.voiceButton {
+    bottom: 20px;
+    left: 90px;
+    position: fixed;
+    height: 50px;
+    width:50px;
+    background-color: cornflowerblue;
+    border-radius: 50%;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    color: white;
+    box-shadow: 3px 3px 10px #A0A0A0;
+    cursor: pointer;
+}
+
+.voiceIcon {
+    align-self: center;
+    height:30px;
+    width: 30px;
+}
+
+.menuButton {
+    float: right;
+
+    padding-bottom: 3px;
+    justify-content: center;
+    display: flex;
+    padding-top: 5px;
+}
+
+.menuIcon {
+    height: 40px;
+}
+
+.menu {
+    top: 50px;
+    right: 0px;
+    border: 1px solid cornflowerblue;
+    background-color: white;
+    position: fixed;
+    width:200px;
+}
+
+.menuOption {
+    height: 50px;
+    border-bottom: 1px solid #A0A0A0;
+    line-height: 50px;
+    padding-left: 10px;
+    color: cornflowerblue;
+    cursor:pointer;
+}
+
+.menuSubOption {
+    height: 50px;
+    border-bottom: 1px solid #A0A0A0;
+    line-height: 50px;
+    padding-left: 20px;
+    cursor: pointer;
+    color: cornflowerblue;
+}
+
+.menuOption:hover, .menuSubOption:hover {
+    background-color: #ccdefc;
+    text-decoration: none;
+}
+
+.menuSubOption::before {
+    font-family: "Webdings";
+    content: "=  ";
+}
+
+.indivNoteText {
+    white-space: pre-line;
+}
+
+.btn-xs {
+    padding: 1px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+
+.img-thumbnail {
+    margin-bottom: 5px;
+    height: 150px;
+}
+
+.catBox {
+    float: right;
+    margin-top: 20px;
+    margin-right: 10px;
+}

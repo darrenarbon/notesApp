@@ -1,0 +1,15 @@
+<note ng-repeat="note in notes | orderBy:orderByWhat : reverse" ng-if="note.complete==0 || showAllItemsInDisplay==true" info="note" id="note.note_id" ng-model="showAllItemsInDisplay"></note>
+<!-- | orderBy: 'starred' : true -->
+<a href="#!/newnote">
+    <div class="addNewButton">
+        +
+    </div>
+</a>
+
+<div class="priorityButton" data-ng-click="toggleView()">
+    !
+</div>
+
+<div class="voiceButton" data-ng-click="voiceAdd()">
+    <img src="img/microphone.png" class="voiceIcon">
+</div>

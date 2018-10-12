@@ -1,0 +1,24 @@
+<a ng-href="#!/notes/{{info.note_id}}">
+    <div class="note noteList" ng-class="info.class" style="border-left: 10px solid {{info.category_colour}}">
+        <div class="noteText">
+            {{info.title}}
+        </div>
+
+        <div class="iconBar">
+            <button class="btn btn-xs" ng-class="info.class_name" ng-click="changeStatus(info, $event)">
+                {{info.status_name}}
+            </button>
+            <img ng-src="{{info.starredImage}}" width="20px" height="20px" ng-click="starItem(info, $event);"/>
+            <!--<img ng-src="{{info.starredImage}}" width="20px" height="20px" ng-click="test($event);" />-->
+            <img ng-src="{{info.actionImage}}" width="20px" height="20px" ng-click="deleteItem(info, $event)"/>
+        </div>
+
+
+        <div class="dateText">
+            {{info.date_due | newDate | date: "mediumDate"}}
+        </div>
+
+    </div>
+
+</a>
+
