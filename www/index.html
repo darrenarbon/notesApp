@@ -80,5 +80,34 @@
     <script src="js/services/notes.js"></script>
 
     <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript">
+        //application shortcuts
+        document.addEventListener("deviceready", onDeviceReady, false);
+
+        function onDeviceReady() {
+
+           var shortcut = {
+                id: 'add_new_note_v99',
+                shortLabel: 'Add Note',
+                longLabel: 'Add a note',
+                iconBitmap: '',
+                intent: {
+                    action: 'android.intent.action.RUN',
+                    categories: [
+                        'android.intent.category.TEST', // Built-in Android category
+                        'MY_CATEGORY' // Custom categories are also supported
+                    ],
+                    flags: 67108864, // FLAG_ACTIVITY_CLEAR_TOP
+                    data: 'myapp://android_asset/www/index.html#!/categories/99999/notes/newnote' // Must be a well-formed URI
+                }
+            }
+            window.plugins.Shortcuts.setDynamic([shortcut], function() {
+                //window.alert('Shortcuts were applied successfully');
+            }, function(error) {
+                //window.alert('Error: ' + error);
+            })
+        }
+
+    </script>
     </body>
 </html>

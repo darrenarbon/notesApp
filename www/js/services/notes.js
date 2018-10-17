@@ -227,6 +227,9 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates) {
         }
         if (note.categories_id == null) note.categories_id = "99999"
     }
+
+
+
 });
 
 

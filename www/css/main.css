@@ -278,13 +278,7 @@ body {
     padding:0;
     z-index: 1;
 }
-/*.nav ul:before,.nav ul:after {*/
-    /*content:"";*/
-    /*display:table;*/
-/*}*/
-/*.nav ul:after {*/
-    /*clear:both;*/
-/*}*/
+
 .nav ul > li {
     float:left;
     position:relative;
@@ -418,4 +412,3 @@ body {
     transform: translateY(-50%) rotate(45deg);
     margin-left: 10px;
 }
-
