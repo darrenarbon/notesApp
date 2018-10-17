@@ -1,4 +1,4 @@
-app.controller('ListCatsController', function($scope, $location, speech, NoteService) {
+app.controller('ListCatsController', function($scope, $location, speech, NoteService, NotesDAO) {
     $scope.categories = [];
 
     NoteService.loadCategories(undefined, true).then(function(data){

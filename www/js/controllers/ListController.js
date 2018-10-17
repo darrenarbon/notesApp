@@ -7,8 +7,8 @@ app.controller('ListController', function($scope, $routeParams, speech, NoteServ
     if ($routeParams.catid == 0){
         //load priority category
         NoteService.loadPriorityNotes().then(function(data){
-            $scope.notes = data
-            $scope.categoryName = "Priority List"
+            $scope.notes = data;
+            $scope.categoryName = "Priority List";
         })
     } else {
         //load the relevant category
@@ -22,12 +22,10 @@ app.controller('ListController', function($scope, $routeParams, speech, NoteServ
                 });
                 var thisCat = data.filter(function (cat) {
                     return cat.category_id == $routeParams.catid
-                })[0]
-                $scope.categoryName = thisCat.category_name
-                $scope.categoryId = thisCat.category_id
-            })
-
-            console.log(data)
+                })[0];
+                $scope.categoryName = thisCat.category_name;
+                $scope.categoryId = thisCat.category_id;
+            });
         })
     }
 
