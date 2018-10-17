@@ -5,19 +5,22 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates) {
         aStatuses = data
     })
 
-    this.loadNotes = function(id) {
+    this.loadNotes = function(catID, noteID) {
         //if not ID passed, then load all the notes
 
         return $q(function (resolve, reject) {
             var baseSQL;
             var baseParams = [];
-            if(!id) {
-                baseSQL = "Select * FROM notes left join categories c on notes.categories_id=c.category_id left join status s on notes.status_id=s.status_id";
-                //if (!$rootScope.showAllItemsInDisplay) baseSQL += " where complete=0";
-                baseSQL += " order by date_added DESC, title";
-            } else {
-                baseSQL = "Select * FROM notes left join categories c on notes.categories_id=c.category_id left join status s on notes.status_id=s.status_id where note_id=?"
-                baseParams = [id]
+            if(catID) {
+                if (catID === "99999") {
+                    baseSQL = "Select * from notes left join categories c on notes.categories_id=c.category_id left join status s on notes.status_id=s.status_id where (notes.categories_id = '') OR (notes.categories_id IS NULL)";
+                } else {
+                    baseSQL = "Select * from notes left join categories c on notes.categories_id=c.category_id left join status s on notes.status_id=s.status_id where notes.categories_id = ?";
+                    baseParams = [catID]
+                }
+            } else if (noteID) {
+                baseSQL = "Select * FROM notes left join categories c on notes.categories_id=c.category_id left join status s on notes.status_id=s.status_id where note_id=?";
+                baseParams = [noteID]
             }
 
             dbCall.getData(baseSQL, baseParams).then(function(result) {
@@ -94,12 +97,12 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates) {
             if (note.date_due === undefined) note.date_due = "";
 
             //set a notification
-            cordova.plugins.notification.local.schedule({
-                id: id,
-                title: note.title,
-                text: note.notes,
-                trigger: { at: note.date_due }
-            });
+            //cordova.plugins.notification.local.schedule({
+            //    id: id,
+            //    title: note.title,
+            //    text: note.notes,
+            //    trigger: { at: note.date_due }
+            //});
 
             if (id) {
                 //update an existing item
@@ -116,12 +119,80 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates) {
         })
     };
 
-    this.loadCategories = function(id) {
+    this.loadCategories = function(catId, fullList) {
+        //catId loads a specific category, fullList adds the priority and uncategorised to the list.
         return $q(function (resolve, reject) {
-            dbCall.getData("Select * FROM categories").then(function(result) {
+            var baseSQL;
+
+            var baseParams = [];
+            if(catId) {
+                baseSQL = "Select * from categories where category_id = ?";
+                baseParams = [catId]
+            } else {
+                baseSQL = "Select * FROM categories";
+            }
+
+            dbCall.getData(baseSQL, baseParams).then(function(result) {
+                result.forEach(function(cat){
+                    cat.href = "#!/categories/" + cat.category_id + "/notes"
+
+                });
+                if (fullList){
+                    result.unshift({
+                        category_id: 0,
+                        category_name: "Priority List",
+                        category_colour: "#FF0000",
+                        href: "#!/categories/0/notes",
+                        noDelete: true
+                    });
+                    result.push({
+                        category_id: 99999,
+                        category_name: "Uncategorised",
+                        category_colour: "cornflowerblue",
+                        href: "#!/categories/99999/notes",
+                        noDelete: true
+                    });
+                }
                 resolve(result)
             })
+        })
+    };
+
+    this.addCategory = function(catId, category) {
+        return $q(function (resolve, reject) {
+            if (catId) {
+                //update an existing item
+                dbCall.modifyData("update categories set category_name = ?, category_colour = ? where category_id=?", [category.category_name, category.category_colour, catId]).then(function (result) {
+                    resolve(result)
+                })
+            } else {
+                //new item to add to the database
+                dbCall.modifyData("insert into categories (category_name, category_colour) values (?,?)", [category.category_name, category.category_colour]).then(function (result) {
+                    resolve(result)
+                })
+            }
         });
+    };
+
+    this.deleteCategory = function(category){
+        return $q(function (resolve, reject) {
+            navigator.notification.confirm(
+                "Are you sure you wish to delete this category, this action cannot be undone. Any notes within this category will be placed in the unassigned list.",
+                function(buttonIndex){
+                    fnDeleteCat(buttonIndex, category)
+                },
+                "Delete Category");
+
+            function fnDeleteCat(buttonIndex, category){
+                if (buttonIndex === 1){
+                    dbCall.modifyData("update notes set categories_id='' where categories_id=?", [category.category_id]).then(function(result) {
+                        dbCall.modifyData("delete from categories where category_id=?", [category.category_id]).then(function (result) {
+                            resolve(result)
+                        })
+                    })
+                }
+            }
+        })
     };
 
 
@@ -154,6 +225,7 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates) {
         } else {
             note.date_added_numeric = ""
         }
+        if (note.categories_id == null) note.categories_id = "99999"
     }
 });
 

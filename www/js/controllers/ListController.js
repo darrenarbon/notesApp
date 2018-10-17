@@ -1,33 +1,35 @@
-app.controller('ListController', function($scope, $location, speech, NoteService,$rootScope) {
+app.controller('ListController', function($scope, $routeParams, speech, NoteService,$rootScope) {
     $scope.notes = [];
     //default view it to see all the items in the list
     $scope.show = "all";
 
     //load all of the notes
-    $scope.loadNotes = function() {
-        NoteService.loadNotes().then(function(data){
-            $scope.notes = data;
-            console.log(data)
-        })
-    };
-
-    //function to show only the priority items.
-    $scope.loadPriority = function() {
+    if ($routeParams.catid == 0){
+        //load priority category
         NoteService.loadPriorityNotes().then(function(data){
             $scope.notes = data
+            $scope.categoryName = "Priority List"
         })
-    };
+    } else {
+        //load the relevant category
+        NoteService.loadNotes($routeParams.catid).then(function(data){
+            $scope.notes = data;
+            //load the cat title
+            NoteService.loadCategories().then(function(data){
+                data.push({
+                    category_id: 99999,
+                    category_name: "Uncategorised"
+                });
+                var thisCat = data.filter(function (cat) {
+                    return cat.category_id == $routeParams.catid
+                })[0]
+                $scope.categoryName = thisCat.category_name
+                $scope.categoryId = thisCat.category_id
+            })
 
-    //allows the user to switch between priority view and all view
-    $scope.toggleView = function(){
-        if($scope.show === "all"){
-            $scope.loadPriority();
-            $scope.show = "priority"
-        } else if ($scope.show === "priority") {
-            $scope.loadNotes();
-            $scope.show = "all"
-        }
-    };
+            console.log(data)
+        })
+    }
 
     //delete an item
     $scope.deleteItem = function(note, $event) {
@@ -75,6 +77,4 @@ app.controller('ListController', function($scope, $location, speech, NoteService
             })
         })
     };
-
-    $scope.loadNotes()
 });

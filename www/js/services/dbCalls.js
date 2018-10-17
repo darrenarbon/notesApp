@@ -51,13 +51,6 @@ app.service('dbCall', function ($http, $q) {
         });
     }
 
-    //needed for an upgrade from an earlier version, but good to have to reset.
-    this.resetDBs = function() {
-        doDBTransaction("DROP TABLE IF EXISTS notes", [], "notes table deleted", "notes table cannot be deleted");
-        doDBTransaction("DROP TABLE IF EXISTS note_categories", [], "categories table deleted", "categories table cannot be deleted");
-        doDBTransaction("DROP TABLE IF EXISTS version", [], "version table deleted", "version table cannot be deleted");
-    };
-
     //sets up the database tables
     this.setupData = function() {
 
@@ -71,6 +64,8 @@ app.service('dbCall', function ($http, $q) {
         doDBTransaction("ALTER TABLE notes add column starred integer default(0)", [], "starred added to notes table", "starred already in notes table");
         doDBTransaction("ALTER TABLE notes add column status_id integer default(1)", [], "status added to notes table", "status already in notes table");
 
+        //version 1.5 database changes
+
         //insert the statuses into the status table
         doDBTransaction("select * from status", [], "status DB queried", "status DB unable to be queried").then(function(res){
             if (res.rows.length === 0){
@@ -83,9 +78,9 @@ app.service('dbCall', function ($http, $q) {
         });
 
         //update the version number
-        doDBTransaction("select * from version where version = ?", ["1.4"], "version number checked", "version number unable to be checked").then(function(res){
+        doDBTransaction("select * from version where version = ?", ["1.53"], "version number checked", "version number unable to be checked").then(function(res){
             if (res.rows.length === 0){
-                doDBTransaction("INSERT INTO version (version, release_date) values(?,?)", ["1.4", "10/10/2018"], "version added to the DB", "version cannot be added to db");
+                doDBTransaction("INSERT INTO version (version, release_date) values(?,?)", ["1.53", "16/10/2018"], "version added to the DB", "version cannot be added to db");
             }
         });
     }

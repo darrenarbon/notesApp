@@ -1,15 +1,15 @@
-<note ng-repeat="note in notes | orderBy:orderByWhat : reverse" ng-if="note.complete==0 || showAllItemsInDisplay==true" info="note" id="note.note_id" ng-model="showAllItemsInDisplay"></note>
-<!-- | orderBy: 'starred' : true -->
-<a href="#!/newnote">
-    <div class="addNewButton">
-        +
-    </div>
-</a>
+<div class="catHeader">{{categoryName}}</div>
+<note ng-repeat="note in filtered = (notes | orderBy:orderByWhat : reverse | filterNotes: showAllItemsInDisplay)" info="note" id="note.note_id" ng-model="showAllItemsInDisplay"></note>
+<div class="noNotesText" ng-if="filtered.length == 0">There are no notes here....</div>
 
-<div class="priorityButton" data-ng-click="toggleView()">
-    !
+<div class="addNewButton" ng-if="categoryId">
+    <a ng-href="#!/categories/{{categoryId}}/notes/newnote">
+        <div class="plusSymbol">
+            +
+        </div>
+    </a>
 </div>
 
-<div class="voiceButton" data-ng-click="voiceAdd()">
+<div class="voiceButton" data-ng-click="voiceAdd()" ng-if="categoryId">
     <img src="img/microphone.png" class="voiceIcon">
 </div>

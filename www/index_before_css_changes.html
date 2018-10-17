@@ -23,35 +23,41 @@
     </head>
     <body ng-app="NotesApp">
     <div ng-controller="HomeController">
-
-
+        <a href="#!/categories">
             <div class="topBar">
-                <a href="#!/categories">
-                    <div class="logo">
-                        noted.
-                    </div>
-                </a>
-                <div class="menuButton nav">
-                    <ul>
-                        <li>
-                            <a><img src="img/menu.png" class="menuIcon"></a>
-                            <ul>
-                                <li class="menuOption">Show All <input type="checkbox" ng-change="showHideItems()" ng-model="allItems" class="catBox"></li>
-                                <li class="menuOption">Sort By:</li>
-                                <li class="menuSubOption menuSubOptionSelected menuSubOptionAsc" ng-click="changeSort('date_added_numeric', $event)">Date Added</li>
-                                <li class="menuSubOption" ng-click="changeSort('date_due_numeric', $event)">Date Due</li>
-                                <li class="menuSubOption" ng-click="changeSort('starred', $event)">Priority</li>
-                                <li class="menuSubOption" ng-click="changeSort('status_id', $event)">Status</li>
-                            </ul>
-                        </li>
-                    </ul>
+                noted.
+                <div class="menuButton">
+                    <img src="img/menu.png" class="menuIcon" ng-click="showHideMenu($event)">
                 </div>
             </div>
-
-
+        </a>
 
         <div ng-view class="contentDiv">
 
+        </div>
+
+        <div class="menu" id="menu" ng-show="showMenu">
+            <div class="menuOption">
+                Show All <input type="checkbox" ng-change="showHideItems()" ng-model="allItems" class="catBox">
+            </div>
+            <div class="menuOption">
+                Sort By:
+            </div>
+            <div class="menuSubOption menuSubOptionSelected menuSubOptionAsc" ng-click="changeSort('date_added_numeric', $event)">
+                Date Added
+            </div>
+            <div class="menuSubOption" ng-click="changeSort('date_due_numeric', $event)">
+                Date Due
+            </div>
+            <div class="menuSubOption" ng-click="changeSort('starred', $event)">
+                Priority
+            </div>
+            <div class="menuSubOption" ng-click="changeSort('categories_id', $event)">
+                Category
+            </div>
+            <div class="menuSubOption" ng-click="changeSort('status_id', $event)">
+                Status
+            </div>
         </div>
     </div>
 

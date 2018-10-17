@@ -11,3 +11,24 @@ function convertDate() {
 angular
     .module('NotesApp')
     .filter('newDate', convertDate);
+
+function filterNotes() {
+    return function(data, showAll) {
+        var returnedObjects = [];
+
+        if (showAll) {
+            return data
+        } else {
+            data.forEach(function(obj) {
+                if (obj.complete === 0){
+                    returnedObjects.push(obj)
+                }
+            })
+            return returnedObjects
+        }
+    };
+}
+
+angular
+    .module('NotesApp')
+    .filter('filterNotes', filterNotes);

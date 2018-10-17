@@ -1,0 +1,27 @@
+<category ng-repeat="category in categories track by category.category_id" ng-if="category.expired != 1" info="category" id="category.category_id"></category>
+
+</a>
+
+<div class="addNewButton addNewSwitcher">
+    <div class="plusSymbol">+</div>
+    <div class="twoLinks">
+        <div class="twoLinks--oneLink">
+            <a href="#!/categories/new">
+                <div class="oneLinkHead">NEW</div>
+                <div class="oneLinkContent">list</div>
+            </a>
+        </div>
+        <div class="twoLinks--oneLink">
+            <a href="#!/categories/99999/notes/newnote">
+                <div class="oneLinkHead">NEW</div>
+                <div class="oneLinkContent">note</div>
+            </a>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="voiceButton" data-ng-click="voiceAdd()">
+    <img src="img/microphone.png" class="voiceIcon">
+</div>

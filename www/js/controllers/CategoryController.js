@@ -1,21 +1,19 @@
-app.controller('CategoryController', function($scope, dbCall, $location, NoteService) {
-    NoteService.loadCategories().then(function(data){
-        $scope.categories = data
-    });
+app.controller('CategoryController', function($scope, dbCall, $location, NoteService, $routeParams) {
+    $scope.buttonLabel = ($routeParams.catid) ? "Update Category" : "Add Category"
 
-    //add a new category
-    $scope.addNewCat = function(){
-        dbCall.modifyData("insert into categories (category_name, category_colour) values (?,?)", [$scope.catText, $scope.catColour]).then(function(result) {
-            $scope.catText = ""
-            $scope.catColour = ""
-            $scope.loadCats()
-        })
+    if ($routeParams.catid) {
+        NoteService.loadCategories($routeParams.catid).then(function(data){
+            $scope.category = data[0];
+        });
     }
 
-    //delete a category
-    $scope.deleteCat = function(id){
-        dbCall.modifyData("delete from categories where category_id=?", [id]).then(function(result) {
-            $scope.loadCats()
+    $scope.submitCategory = function(catId) {
+        NoteService.addCategory(catId, $scope.category).then(function(data){
+            if (catId){
+                $location.path("/categories/" + catId + "/notes")
+            } else {
+                $location.path("/categories/" + data.insertId + "/notes")
+            }
         })
     }
 });
