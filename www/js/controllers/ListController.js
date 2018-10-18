@@ -1,4 +1,4 @@
-app.controller('ListController', function($scope, $routeParams, speech, NoteService,$rootScope) {
+app.controller('ListController', function($scope, $routeParams, speech, NoteService, $rootScope) {
     $scope.notes = [];
     //default view it to see all the items in the list
     $scope.show = "all";
@@ -9,9 +9,11 @@ app.controller('ListController', function($scope, $routeParams, speech, NoteServ
         NoteService.loadPriorityNotes().then(function(data){
             $scope.notes = data;
             $scope.categoryName = "Priority List";
+            $rootScope.orderByWhat = '$index'
         })
     } else {
         //load the relevant category
+        $rootScope.orderByWhat = 'date_added_numeric'
         NoteService.loadNotes($routeParams.catid).then(function(data){
             $scope.notes = data;
             //load the cat title
