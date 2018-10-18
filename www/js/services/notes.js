@@ -2,7 +2,7 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
     //function to load notes
     var aStatuses = [];
 
-    function formatCategories(catList, fullList) {
+    function addDynamicCategories(catList, fullList) {
         catList.forEach(function (cat) {
             cat.href = "#!/categories/" + cat.category_id + "/notes"
         });
@@ -23,6 +23,19 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
             });
         }
         return catList
+    }
+
+    function getStats(category){
+        NotesDAO.getNotes(category.category_id).then(function(result){
+            var aActiveNotes = result.filter(function(note){
+                return note.complete === 0
+            });
+            var aOverdueNotes = result.filter(function(note){
+                return (checkDates.checkOverDue(note.date_due) === "noteOverdue" && note.complete ===0);
+            });
+            category.number_active_notes = aActiveNotes.length;
+            category.number_overdue_notes = aOverdueNotes.length;
+        })
     }
 
     dbCall.getData("select * from status", []).then(function(data){
@@ -142,11 +155,15 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
         return $q(function (resolve, reject) {
             if(catId) {
                 NotesDAO.getCategoryById(catId).then(function(data){
-                    resolve(formatCategories(data, fullList))
+                    resolve(addDynamicCategories(data, fullList))
                 })
             } else {
                 NotesDAO.getCategories().then(function(data){
-                    resolve(formatCategories(data, fullList))
+                    data.forEach(function(category){
+                        getStats(category);
+                    });
+                    console.log(data)
+                    resolve(addDynamicCategories(data, fullList))
                 })
             }
         })
