@@ -78,9 +78,9 @@ app.service('dbCall', function ($http, $q) {
         });
 
         //update the version number
-        doDBTransaction("select * from version where version = ?", ["1.54"], "version number checked", "version number unable to be checked").then(function(res){
+        doDBTransaction("select * from version where version = ?", ["1.55"], "version number checked", "version number unable to be checked").then(function(res){
             if (res.rows.length === 0){
-                doDBTransaction("INSERT INTO version (version, release_date) values(?,?)", ["1.54", "18/10/2018"], "version added to the DB", "version cannot be added to db");
+                doDBTransaction("INSERT INTO version (version, release_date) values(?,?)", ["1.55", "18/10/2018"], "version added to the DB", "version cannot be added to db");
             }
         });
     }

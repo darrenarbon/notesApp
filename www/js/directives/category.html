@@ -7,8 +7,8 @@
         <div class="iconBar" ng-if="!info.noDelete">
             <div class="totalNotes" ng-if="info.number_active_notes>0">{{info.number_active_notes}}</div>
             <div class="overDueNotes" ng-if="info.number_overdue_notes>0">{{info.number_overdue_notes}}</div>
-            <img class="iconBarImage" src="img/edit.svg" width="20px" height="20px" ng-click="editCat(info.category_id, $event)"/>
             <img class="iconBarImage" src="img/delete.png" width="20px" height="20px" ng-click="deleteCat(info, $event)"/>
+            <img class="iconBarImage" src="img/edit.svg" width="20px" height="20px" ng-click="editCat(info.category_id, $event)"/>
         </div>
 
     </div>
