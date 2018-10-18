@@ -1,0 +1,441 @@
+$mainColour: cornflowerblue;
+$mainLightColour: #ccdefc;
+$lightGreyColour: #eaebed;
+$noteDueToday: #f7e4c5;
+$noteOverdue: #f9bfbd;
+$warningColour: red;
+
+%hoverStuff {
+  background-color: $mainLightColour;
+  color: $mainColour;
+  text-decoration: none;
+}
+
+/* MAIN STUFF */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  overflow: scroll;
+}
+
+body {
+  background-color: $lightGreyColour;
+}
+
+a {
+  color: inherit;
+  &:hover {
+    text-decoration: none;
+    color: inherit
+  }
+}
+
+img {
+  vertical-align: inherit;
+}
+
+.topBar {
+  height: 50px;
+  width: 100%;
+  background-color: $mainColour;
+  font-size: 40px;
+  line-height: 50px;
+  padding-left: 10px;
+  padding-right: 10px;
+  box-shadow: 0px 3px 3px #A0A0A0;
+  position: fixed;
+  top:0;
+  z-index: 999;
+}
+
+.logo {
+  float:left;
+  width: calc(100% - 50px);
+}
+
+.contentDiv {
+  margin-top: 60px;
+  width: 100%;
+}
+
+.note {
+  width: calc(100% - 15px);
+  background-color: white;
+  border-bottom: 1px solid $lightGreyColour;
+  padding-left: 10px;
+  margin: 10px;
+  box-shadow: 0 0 3px #8d8d8e;
+  border-top-left-radius: 0.2em;
+  border-bottom-left-radius: 0.2em;
+  color:$mainColour;
+}
+
+@mixin listElement($height){
+    height: $height;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.noteList {
+  @include listElement(50px);
+  &:hover{
+    @extend %hoverStuff;
+  }
+}
+.catList {
+  @include listElement(40px);
+  &:hover{
+    @extend %hoverStuff;
+  }
+}
+
+.noteDueToday {
+  background-color: $noteDueToday;
+}
+
+.noteOverdue {
+  background-color: $noteOverdue;
+}
+
+.dateText {
+  color: $warningColour;
+  display: block;
+  font-size: 12px;
+  clear: left;
+  float: left
+}
+
+@mixin circle($colour, $margin, $bgcol) {
+  color: $colour;
+  font-size: 12px;
+  border: 1px solid $colour;
+  border-radius: 50%;
+  width: 20px;
+  height:20px;
+  display: block;
+  float:left;
+  text-align:center;
+  background-color: $bgcol;
+  margin-left: $margin;
+}
+
+.overDueNotes {
+  @include circle($warningColour, 5px, rgba(255, 0, 0, 0.25))
+}
+
+.totalNotes {
+  @include circle($mainColour, 20px, rgba(100, 149, 237, 0.25))
+}
+
+.iconBar {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: right;
+  margin-right: 2px;
+  height: 20px;
+}
+
+.iconBarImage{
+  float:right;
+  display: block;
+  margin-left: 5px;
+}
+
+.underTitle {
+  border: 0;
+  height: 2px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 1));
+}
+
+.input-group-prepend {
+  width: 100px
+}
+
+.input-group-text {
+  width: 100%
+}
+
+.deleteIconDiv {
+  display: block;
+  float:right;
+  height: 100%;
+  padding-right: 0px;
+  text-align: right;
+}
+
+.noteText {
+  float:left;
+  width: calc(100% - 125px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@mixin newButton($type) {
+  bottom: 20px;
+  position: fixed;
+  height: 50px;
+  width:50px;
+  background-color: $mainColour;
+  border-radius: 50%;
+  display: flex;
+  color: white;
+  box-shadow: 3px 3px 10px #A0A0A0;
+  cursor: pointer;
+  @if $type == voice {
+    left: 20px;
+    text-align: center;
+    justify-content: center;
+  }
+  @else {
+    right: 20px;
+  }
+}
+
+.addNewButton {
+  @include newButton(click);
+  &:hover {
+    .plusSymbol {
+      opacity: 0;
+    }
+    .twoLinks {
+      opacity: 1;
+      visibility: visible;
+      font-size: 16px;
+      color: white;
+    }
+  }
+}
+
+.addNewSwitcher {
+  transition: all .3s ease-in-out;
+  &:hover{
+    border-radius: 3%;
+    width: 120px;
+  }
+}
+
+.oneLinkHead {
+  font-size:100%;
+}
+
+.oneLinkContent {
+  font-size:75%;
+}
+
+.plusSymbol {
+  opacity: 1;
+  transition: all .3s ease-in-out;
+  font-size: 30px;
+  text-align: center;
+  margin-left: 17px;
+  margin-top:2px;
+  position: absolute;
+}
+
+.twoLinks {
+  opacity: 0;
+  transition: all .3s ease-in-out;
+  text-align: center;
+  margin-left: 0px;
+  visibility: hidden;
+  font-size: 16px;
+  color: white;
+  min-width: 120px;
+  position: absolute;
+}
+
+.twoLinks--oneLink {
+  float:left;
+  margin-left: 12px;
+  margin-right: 6px;
+  margin-top:2px;
+  min-width: 40px;
+}
+
+.voiceButton {
+  @include newButton(voice)
+}
+
+.voiceIcon {
+  align-self: center;
+  height:30px;
+  width: 30px;
+}
+
+.indivNoteText {
+  white-space: pre-line;
+}
+
+.btn-xs {
+  padding: 1px 5px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+}
+
+.img-thumbnail {
+  margin-bottom: 5px;
+  height: 150px;
+}
+
+.catBox {
+  float: right;
+  margin-top: 20px;
+  margin-right: 10px;
+}
+
+.catHeader {
+  margin: 0 auto;
+  text-transform: uppercase;
+  width:40%;
+  border-radius: 0.375rem;
+  text-align: center;
+  background-color: $mainColour;
+  font-weight: bolder;
+}
+
+.noNotesText {
+  margin: 0 auto;
+  margin-top: 10px;
+  width:60%;
+  border-radius: 0.375rem;
+  text-align: center;
+  background-color: rgba(100, 149, 237, 0.35);
+}
+
+/* MENU STUFF FOR HOVER */
+
+.nav {
+  z-index: -1;
+  ul {
+    *zoom:1;
+    list-style:none;
+    margin:0;
+    padding:0;
+    z-index: 1;
+    > li {
+      float:left;
+      position:relative;
+      &:hover ul {
+        box-shadow: 0 0 3px #8d8d8e;
+        li {
+          height:50px;
+        }
+      }
+    }
+    li {
+      ul {
+        background:rgb(255,255,255);
+        position:absolute;
+        left:-145px;
+        top:45px;
+        z-index:-1;
+        li {
+          width:175px;
+          overflow:hidden;
+          height:0;
+          -webkit-transition:height 200ms ease-in;
+          -moz-transition:height 200ms ease-in;
+          -o-transition:height 200ms ease-in;
+          transition:height 200ms ease-in;
+        }
+      }
+    }
+  }
+  a {
+    display:block;
+    padding:0px 0px;
+    line-height:1.2em;
+    color:#fff;
+    &:hover{
+      text-decoration:none;
+    }
+  }
+}
+
+/* MENU STUFF */
+
+.menuButton {
+  float: right;
+  padding-bottom: 3px;
+  justify-content: center;
+  display: flex;
+  padding-top: 5px;
+  width:40px;
+  height:50px;
+
+}
+
+.menuIcon {
+  height: 40px;
+}
+
+.menu {
+  top: 50px;
+  right: 0px;
+  border: 1px solid $mainColour;
+  background-color: white;
+  position: fixed;
+  width:175px;
+}
+
+@mixin menuOption($padding){
+  height: 50px;
+  line-height: 50px;
+  padding-left: $padding;
+  color: $mainColour;
+  cursor:pointer;
+  font-size: 1rem;
+  &:hover{
+    background-color: $mainLightColour;
+    text-decoration: none;
+  }
+}
+
+.menuOption {
+  @include menuOption(10px);
+}
+
+.menuSubOption {
+  @include menuOption(20px)
+}
+
+.menuSubOptionSelected {
+  background-color: $mainLightColour;
+}
+
+.menuSubOption::before {
+  display: inline-block;
+  content: '';
+  -webkit-border-radius: 0.375rem;
+  border-radius: 0.375rem;
+  height: 0.5rem;
+  width: 0.5rem;
+  margin-right: 0.5rem;
+  background-color: $mainColour;
+}
+
+@mixin AscDescArror($deg){
+  display: inline-block;
+  content: '';
+  border-right:2px solid black;
+  border-bottom:2px solid black;
+  width:10px;
+  height:10px;
+  top: calc(50% - 4px);
+  left: -20px;
+  transform: translateY(-50%) rotate($deg);
+  margin-left: 10px;
+}
+
+.menuSubOptionAsc::after {
+  @include AscDescArror(-135deg);
+}
+
+.menuSubOptionDesc::after {
+  @include AscDescArror(45deg);
+}
