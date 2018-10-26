@@ -1,0 +1,15 @@
+<div class="catHeader">{{currentDay}}</div>
+<note ng-repeat="note in filtered = (notes | orderBy:orderByWhat : reverse)" info="note" id="note.note_id" ng-model="showAllItemsInDisplay"></note>
+<div class="noNotesText" ng-if="filtered.length == 0">There are no notes here....</div>
+
+<div class="addNewButton" ng-if="categoryId">
+    <a ng-href="#!/categories/-1/notes/newnote">
+        <div class="plusSymbol">
+            +
+        </div>
+    </a>
+</div>
+
+<div class="voiceButton" data-ng-click="voiceAdd()" ng-if="categoryId">
+    <img src="img/microphone.png" class="voiceIcon">
+</div>

@@ -1,15 +1,17 @@
-app.controller('ListCatsController', function($scope, $location, speech, NoteService, NotesDAO) {
+app.controller('ListCatsController', function($scope, $location, speech, NoteService, NotesDAO, CalendarService) {
     $scope.categories = [];
 
-    NoteService.loadCategories(undefined, true).then(function(data){
-        $scope.categories = data;
-    })
+    $scope.$on('$viewContentLoaded', function() {
+        NoteService.loadCategories(undefined, true).then(function(data){
+            $scope.categories = data;
+            $scope.days = CalendarService.create5Days()
+        });
+    });
 
     //delete an item
     $scope.deleteCat = function(category, $event) {
         $event.stopPropagation();
         $event.preventDefault();
-
         NoteService.deleteCategory(category).then(function(data){
             category.expired = 1;
         })

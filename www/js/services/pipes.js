@@ -17,7 +17,12 @@ function filterNotes() {
         var returnedObjects = [];
 
         if (showAll) {
-            return data
+            data.forEach(function(obj) {
+                if (obj.complete === 1){
+                    returnedObjects.push(obj)
+                }
+            })
+            return returnedObjects
         } else {
             data.forEach(function(obj) {
                 if (obj.complete === 0){

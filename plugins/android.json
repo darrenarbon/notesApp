@@ -33,6 +33,16 @@
     },
     "cordova-plugin-shortcuts-android": {
       "PACKAGE_NAME": "com.darbon.notesApp"
+    },
+    "cordova-plugin-calendar": {
+      "PACKAGE_NAME": "com.darbon.notesApp"
+    },
+    "cordova-plugin-customurlscheme": {
+      "URL_SCHEME": "noted",
+      "ANDROID_SCHEME": " ",
+      "ANDROID_HOST": " ",
+      "ANDROID_PATHPREFIX": "/",
+      "PACKAGE_NAME": "com.darbon.notesApp"
     }
   },
   "dependent_plugins": {

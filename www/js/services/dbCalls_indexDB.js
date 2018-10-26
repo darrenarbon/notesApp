@@ -1,5 +1,9 @@
 app.service('dbCall', function ($http, $q) {
+    dbCall = this;
 
+    this.setupData = function() {
+        console.log("database setting up")
+    };
     window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
     // DON'T use "var indexedDB = ..." if you're not in a function.
     // Moreover, you may need references to some window.IDB* objects:
@@ -7,90 +11,287 @@ app.service('dbCall', function ($http, $q) {
     window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
     // (Mozilla has never prefixed these objects, so we don't need window.mozIDB*)
 
-
     // Let us open our database
-    var DBOpenRequest = window.indexedDB.open("noted", 1);
+    var dbVersion = 1;
+    var dbName = "notedDB"
+    var request = window.indexedDB.open(dbName, dbVersion);
+    var db;
 
-    //function to return an array of the rows returned from the query.
-    this.getData = function (query, params = []) {
-        //console.log("Transaction Query : " + query);
+    request.onerror = function(event) {
+        console.log("Why didn't you allow my web app to use IndexedDB?!");
+    };
+    request.onsuccess = function(event) {
+        db = event.target.result;
+        console.log("success: " + db);
+        db.onerror = function(event) {
+            // Generic error handler for all errors targeted at this database's requests!
+            console.log("Database error: " + event.target.errorCode);
+        };
+    };
+
+    request.onupgradeneeded = function(event) {
+        db = event.target.result;
+        console.log("upgraded DB");
+        // Create an objectStore to hold note data
+        if(!db.objectStoreNames.contains("notes")) {
+            console.log("I need to make the notes objectstore");
+            var noteObjectStore = db.createObjectStore("notes", { keyPath: "note_id", autoIncrement:true });
+            noteObjectStore.createIndex("categories_id", "categories_id", { unique: false });
+            noteObjectStore.createIndex("note_id", "note_id", { unique: true });
+        }
+
+        // Create an objectStore to hold category data
+        if(!db.objectStoreNames.contains("categories")) {
+            console.log("I need to make the categories objectstore");
+            var catObjectStore = db.createObjectStore("categories", { keyPath: "category_id", autoIncrement:true });
+            catObjectStore.createIndex("category_id", "category_id", { unique: true });
+        }
+
+        // "note_id" as our key path
+        if(!db.objectStoreNames.contains("status")) {
+            console.log("I need to make the status objectstore");
+            var statObjectStore = db.createObjectStore("status", { keyPath: "status_id", autoIncrement:true });
+        }
+
+        if(!db.objectStoreNames.contains("settings")) {
+            console.log("I need to make the settings objectstore");
+            var settingsObjectStore = db.createObjectStore("settings", { keyPath: "settings_id", autoIncrement:true });
+            settingsObjectStore.createIndex("settings_id", "settings_id", { unique: true });
+            settingsObjectStore.transaction.oncomplete = function(event) {
+                var objectSettings = [{add_to_calendar_default: 0, allow_notifications: 0, allow_calendar_integration: 0}];
+                var objectObjectStore = db.transaction("settings", "readwrite").objectStore("settings");
+                objectSettings.forEach(function(setting) {
+                    objectObjectStore.add(setting);
+                });
+            };
+        }
+
+        // Create an objectStore to hold status data
+        if(!db.objectStoreNames.contains("version")) {
+            console.log("I need to make the version objectstore");
+
+            var verObjectStore = db.createObjectStore("version", { keyPath: "version_id", autoIncrement:true });
+            verObjectStore.transaction.oncomplete = function(event) {
+                //add all the data
+                console.log("I am now adding the data");
+                var objectVersions = [{version: "1.55", release_date: "18/10/2018"}];
+                var versionObjectStore = db.transaction("version", "readwrite").objectStore("version");
+                objectVersions.forEach(function(version) {
+                    versionObjectStore.add(version);
+                });
+
+                var objectStatuses = [{status_name: "Created", class_name: "btn-secondary"},{status_name: "In progress", class_name: "btn-success"}, {status_name: "Waiting", class_name: "btn-warning"}, {status_name: "On hold", class_name: "btn-primary"}, {status_name: "Cancelled", class_name: "btn-danger"}]
+                var statusObjectStore = db.transaction("status", "readwrite").objectStore("status");
+                objectStatuses.forEach(function(status) {
+                    statusObjectStore.add(status);
+                });
+
+                var objectSettings = [{add_to_calendar_default: 0, allow_notifications: 0, allow_calendar_integration: 0}];
+                var objectObjectStore = db.transaction("settings", "readwrite").objectStore("settings");
+                objectSettings.forEach(function(setting) {
+                    objectObjectStore.add(setting);
+                });
+            };
+        }
+    };
+
+    this.getJoinedData = function(stores, primary_id, primary_column, joins){
+        //stores has [primary, secondary, tertiary]
+        //primary_id is for the id of the primary table
+        //joins is an array of {pri_table: 'notes', pri_col: 'name', other_table: 'category', other_col: 'name'}
         return $q(function (resolve, reject) {
-            myDB.transaction(function (transaction) {
-                transaction.executeSql(query, params, function (transaction, result) {
-                    var resultsArray = [];
-                    for (var i = 0; i < result.rows.length; i++) {
-                        resultsArray.push(result.rows[i])
+            dbCall.getAllData(stores[0], primary_column, primary_id).then(function(primaryData){
+                dbCall.getAllTables(stores.slice(1)).then(function(response){
+                    resolve(primaryData);
+                    primaryData.forEach(function(row){
+                        var fullObject = {};
+                        joins.forEach(function(join){
+                            var otherIndex = stores.indexOf(join.other_table) - 1;
+                            response[otherIndex].forEach(function(linkedRow){
+                                if (linkedRow[join.other_col] === row[join.pri_col]){
+                                    fullObject = Object.assign(row, linkedRow)
+                                }
+                            })
+                        })
+                    });
+                })
+            })
+        });
+    };
+
+    this.getAllTables = function(stores){
+        return $q(function (resolve, reject) {
+            var allPromises = [];
+            stores.forEach(function(store){
+                var promise = dbCall.getAllData(store);
+                allPromises.push(promise)
+            });
+            $q.all(allPromises).then(function(data){
+                resolve(data)
+            })
+        })
+    };
+
+    this.getIndividualData = function(store, id){
+        return $q(function (resolve, reject) {
+            var DBOpenReq = window.indexedDB.open(dbName, dbVersion);
+            DBOpenReq.onsuccess = function (event) {
+                db = event.target.result;
+                if (store) {
+                    var transaction = db.transaction([store]);
+                    var objectStore = transaction.objectStore(store);
+                    var request = objectStore.get(id);
+                    request.onerror = function (event) {
+                        alert("Unable to retrieve data from database!");
+                    };
+
+                    request.onsuccess = function (event) {
+                        if (request.result) {
+                            resolve(request.result)
+                        } else {
+                            console.log("Entry not in database");
+                        }
+                    };
+                }
+            }
+        });
+    };
+
+    this.getAllData = function(store, whereField, id){
+        return $q(function (resolve, reject) {
+            var DBOpenReq = window.indexedDB.open(dbName, dbVersion);
+            DBOpenReq.onsuccess = function (event) {
+                db = event.target.result;
+                if (store) {
+                    var transaction = db.transaction([store]);
+                    var objectStore = transaction.objectStore(store);
+                    var results = [];
+                    if (whereField){
+                        var myIndex = objectStore.index(whereField);
+
+                        var request = myIndex.openCursor(IDBKeyRange.only(id)).onsuccess = function(event){
+                            var cursor = event.target.result;
+                            if (cursor) {
+                                results.push(cursor.value);
+                                cursor.continue();
+                            } else {
+                                resolve(results)
+                            }
+                        };
+                    } else {
+                        objectStore.openCursor().onsuccess = function(event){
+                            var cursor = event.target.result;
+                            if (cursor) {
+                                results.push(cursor.value);
+                                cursor.continue();
+                            } else {
+                                resolve(results)
+                            }
+                        };
                     }
-                    resolve(resultsArray);
-                }, nullHandler, errorHandler);
-            });
+                }
+            }
         });
     };
 
-    //function to modify data in the database
-    this.modifyData = function (query, params = []) {
-        //console.log("Transaction Query : " + query);
+    this.add = function(store, data){
         return $q(function (resolve, reject) {
-            myDB.transaction(function (transaction) {
-                transaction.executeSql(query, params, function (transaction, result) {
-                    resolve(result);
-                }, nullHandler, errorHandler);
-            });
+            var DBOpenReq = window.indexedDB.open(dbName, dbVersion);
+            DBOpenReq.onsuccess = function (event) {
+                db = event.target.result;
+                if (data) {
+                    var request = db.transaction([store], "readwrite")
+                        .objectStore(store)
+                        .add( data );
+                    request.onsuccess = function(event) {
+                        resolve({insertId: event.target.result});
+                    };
+
+                    request.onerror = function(event) {
+                        alert("Unable to add data");
+                        reject("error: " + event)
+                    };
+                }
+            }
         });
     };
 
-    function nullHandler(error) {
-        //console.log("null handler");
-    }
-
-    function errorHandler(error) {
-        //console.log("error handler");
-    }
-
-    //function for setting up the tables
-    function doDBTransaction(SQL, params, resultMsg, errorMsg) {
+    this.update = function(store, id, data, whereField){
         return $q(function (resolve, reject) {
-            myDB.transaction(function (transaction) {
-                transaction.executeSql(SQL, params,
-                    function (tx, result) {
-                        //console.log(resultMsg);
-                        resolve(result);
-                    },nullHandler, errorHandler);
-            });
-        });
-    }
+            var DBOpenReq = window.indexedDB.open(dbName, dbVersion);
+            DBOpenReq.onsuccess = function (event) {
+                db = event.target.result;
+                if (store && data) {
+                    var objectStore = db.transaction([store], "readwrite").objectStore(store);
+                    if (whereField){
+                        var myIndex = objectStore.index(whereField);
+                        var request = myIndex.openCursor(IDBKeyRange.only(id)).onsuccess = function(event){
+                            var cursor = event.target.result;
+                            if (cursor) {
+                                var valueFromDB = cursor.value;
 
-    //sets up the database tables
-    this.setupData = function() {
+                                //data will arrive as an array of arrays [[fieldName, value], [fieldName, value]]
+                                data.forEach(function(field){
+                                    valueFromDB[field[0]] = field[1]
+                                });
 
-        //add databases
-        doDBTransaction("CREATE TABLE IF NOT EXISTS notes (note_id integer primary key, title text, notes text, date_added text default current_timestamp, categories_id integer, date_due text, complete integer default(0), photo text)", [], "Notes table created", "Notes table not created")
-        doDBTransaction("CREATE TABLE IF NOT EXISTS categories (category_id integer primary key, category_name text, category_colour text, CONSTRAINT name_unique UNIQUE (category_name))", [], "Categories table created", "Categories table not created")
-        doDBTransaction("CREATE TABLE IF NOT EXISTS version (version_id integer primary key, version text, release_date text)", [], "Version table created", "Version table not created");
-        doDBTransaction("CREATE TABLE IF NOT EXISTS status (status_id integer primary key, status_name text, class_name text)", [], "Status table created", "Status table not created");
+                                // Put this updated object back into the database.
+                                var requestUpdate = objectStore.put(valueFromDB);
+                                requestUpdate.onerror = function(event) {
+                                    reject("Error: " + event)
+                                };
+                                requestUpdate.onsuccess = function(event) {
+                                    resolve("Success")
+                                };
+                                cursor.continue();
+                            } else {
+                                resolve("Success")
+                            }
+                        };
+                    } else {
+                        //no where clause so go for the main id
+                        var request = objectStore.get(id);
+                        request.onsuccess = function(event) {
+                            // Get the old value that we want to update
+                            var valueFromDB = event.target.result;
 
-        //version 1.2 database changes
-        doDBTransaction("ALTER TABLE notes add column starred integer default(0)", [], "starred added to notes table", "starred already in notes table");
-        doDBTransaction("ALTER TABLE notes add column status_id integer default(1)", [], "status added to notes table", "status already in notes table");
+                            //data will arrive as an array of arrays [[fieldName, value], [fieldName, value]]
+                            data.forEach(function(field){
+                                valueFromDB[field[0]] = field[1]
+                            });
 
-        //version 1.5 database changes
-
-        //insert the statuses into the status table
-        doDBTransaction("select * from status", [], "status DB queried", "status DB unable to be queried").then(function(res){
-            if (res.rows.length === 0){
-                doDBTransaction("INSERT INTO status (status_name, class_name) values(?,?)", ["Created", "btn-secondary"], "status added to the DB", "status cannot be added to db");
-                doDBTransaction("INSERT INTO status (status_name, class_name) values(?,?)", ["In progress", "btn-success"], "status added to the DB", "status cannot be added to db");
-                doDBTransaction("INSERT INTO status (status_name, class_name) values(?,?)", ["Waiting", "btn-warning"], "status added to the DB", "status cannot be added to db");
-                doDBTransaction("INSERT INTO status (status_name, class_name) values(?,?)", ["On hold", "btn-primary"], "status added to the DB", "status cannot be added to db");
-                doDBTransaction("INSERT INTO status (status_name, class_name) values(?,?)", ["Cancelled", "btn-danger"], "status added to the DB", "status cannot be added to db");
+                            // Put this updated object back into the database.
+                            var requestUpdate = objectStore.put(valueFromDB);
+                            requestUpdate.onerror = function(event) {
+                                reject("Error: " + event)
+                            };
+                            requestUpdate.onsuccess = function(event) {
+                                resolve("Success")
+                            };
+                        };
+                    }
+                    request.onerror = function(event) {
+                        reject("Error: " + event)
+                    };
+                }
             }
         });
+    };
 
-        //update the version number
-        doDBTransaction("select * from version where version = ?", ["1.55"], "version number checked", "version number unable to be checked").then(function(res){
-            if (res.rows.length === 0){
-                doDBTransaction("INSERT INTO version (version, release_date) values(?,?)", ["1.55", "18/10/2018"], "version added to the DB", "version cannot be added to db");
+    this.remove = function(store, id){
+        return $q(function (resolve, reject) {
+            var DBOpenReq = window.indexedDB.open(dbName, dbVersion);
+            DBOpenReq.onsuccess = function (event) {
+                db = event.target.result;
+                if (store) {
+                    var request = db.transaction([store], "readwrite")
+                        .objectStore(store)
+                        .delete(id);
+                    request.onsuccess = function(event) {
+                        resolve("Removed");
+                    };
+                }
             }
         });
-    }
+    };
 });

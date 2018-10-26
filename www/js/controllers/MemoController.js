@@ -1,16 +1,16 @@
 app.controller('MemoController', function($scope,dbCall, $routeParams, checkDates, $location, NoteService) {
 
-    $scope.loadNote = function() {
+    $scope.$on('$viewContentLoaded', function() {
         NoteService.loadNotes(undefined, $routeParams.noteid).then(function(data){
-            $scope.note = ""
+            $scope.note = "";
             $scope.note = data[0]
         })
-    };
+    });
 
     //delete an item
     $scope.deleteItem = function(note) {
         note.complete = (note.complete === 0) ? 1 : 0;
-        NoteService.deleteNote(note.note_id, note.complete).then(function(data){
+        NoteService.deleteNote(note).then(function(data){
             $location.path("/categories/" + $routeParams.catid + "/notes")
         });
     };
@@ -34,7 +34,5 @@ app.controller('MemoController', function($scope,dbCall, $routeParams, checkDate
     //edit the item
     $scope.editItem = function(id) {
         $location.path("/categories/" + $routeParams.catid + "/notes/" + $routeParams.noteid + "/edit")
-    }
-
-    $scope.loadNote()
+    };
 });

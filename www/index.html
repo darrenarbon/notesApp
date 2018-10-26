@@ -23,38 +23,58 @@
     </head>
     <body ng-app="NotesApp">
     <div ng-controller="HomeController">
-
-
-            <div class="topBar">
-                <a href="#!/categories">
-                    <div class="logo">
-                        noted.
-                    </div>
-                </a>
-                <div class="menuButton nav">
-                    <ul>
-                        <li>
-                            <a><img src="img/menu.png" class="menuIcon"></a>
-                            <ul>
-                                <li class="menuOption">Show All <input type="checkbox" ng-change="showHideItems()" ng-model="allItems" class="catBox"></li>
-                                <li class="menuOption">Sort By:</li>
-                                <li class="menuSubOption menuSubOptionSelected menuSubOptionAsc" ng-click="changeSort('date_added_numeric', $event)">Date Added</li>
-                                <li class="menuSubOption" ng-click="changeSort('date_due_numeric', $event)">Date Due</li>
-                                <li class="menuSubOption" ng-click="changeSort('starred', $event)">Priority</li>
-                                <li class="menuSubOption" ng-click="changeSort('status_id', $event)">Status</li>
-                            </ul>
-                        </li>
-                    </ul>
+        <div class="topBar">
+            <a href="#!/categories">
+                <div class="logo">
+                    noted.
                 </div>
+            </a>
+            <div class="menuButton nav">
+                <ul>
+                    <li>
+                        <a><img src="img/menu.png" class="menuIcon"></a>
+                        <ul>
+                            <li class="menuHeader">Options</li>
+                            <li class="menuOption">
+                                <div class="optionText">
+                                    <div class="optionTitle">Calendar Integration</div>
+                                    <div class="optionDesc">Enable the option to add due dates to your phones calendar.</div>
+                                </div>
+                                <div class="optionToggle">
+                                    <input type="checkbox" ng-change="changeSettings()" ng-model="notedSettings.allow_calendar_integration" ng-checked="notedSettings.allow_calendar_integration" class="catBox">
+                                </div>
+                            </li>
+                            <li class="menuOption">
+                                <div class="optionText">
+                                    <div class="optionTitle">Allow Notifications</div>
+                                    <div class="optionDesc">Add notifications when you set a due date.</div>
+                                </div>
+                                <div class="optionToggle">
+                                    <input type="checkbox" ng-change="changeSettings()" ng-model="notedSettings.allow_notifications" ng-model="notedSettings.allow_notifications" class="catBox">
+                                </div>
+                            </li>
+                            <li class="menuOption">
+                                <div class="optionText">
+                                    <div class="optionTitle">Add to Calendar</div>
+                                    <div class="optionDesc">Set the 'add to calendar' option to on by default.</div>
+                                </div>
+                                <div class="optionToggle">
+                                    <input type="checkbox" ng-change="changeSettings()" ng-model="notedSettings.add_to_calendar_default" ng-model="notedSettings.allow_notifications" class="catBox">
+                                </div>
+                            </li>
+                            <li class="menuOptionHeader">Sort By:</li>
+                            <li class="menuSubOption menuSubOptionSelected menuSubOptionAsc" ng-click="changeSort('date_added_numeric', $event)">Date Added</li>
+                            <li class="menuSubOption" ng-click="changeSort('date_due_numeric', $event)">Date Due</li>
+                            <li class="menuSubOption" ng-click="changeSort('starred', $event)">Priority</li>
+                            <li class="menuSubOption" ng-click="changeSort('status_id', $event)">Status</li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
-
-
-
+        </div>
         <div ng-view class="contentDiv">
-
         </div>
     </div>
-
     <!-- Modules -->
     <script src="js/app.js"></script>
 
@@ -65,6 +85,7 @@
     <script src="js/controllers/HomeController.js"></script>
     <script src="js/controllers/CategoryController.js"></script>
     <script src="js/controllers/ListCatsController.js"></script>
+    <script src="js/controllers/DayController.js"></script>
 
     <!-- Directives -->
     <script src="js/directives/note.js"></script>
@@ -79,35 +100,12 @@
     <script src="js/services/speech.js"></script>
     <script src="js/services/notes.js"></script>
     <script src="js/services/notesDAO.js"></script>
+    <script src="js/services/calendar.js"></script>
 
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript">
         //application shortcuts
-        document.addEventListener("deviceready", onDeviceReady, false);
 
-        function onDeviceReady() {
-
-           var shortcut = {
-                id: 'add_new_note_v99',
-                shortLabel: 'Add Note',
-                longLabel: 'Add a note',
-                iconBitmap: '',
-                intent: {
-                    action: 'android.intent.action.RUN',
-                    categories: [
-                        'android.intent.category.TEST', // Built-in Android category
-                        'MY_CATEGORY' // Custom categories are also supported
-                    ],
-                    flags: 67108864, // FLAG_ACTIVITY_CLEAR_TOP
-                    data: 'myapp://android_asset/www/index.html#!/categories/99999/notes/newnote' // Must be a well-formed URI
-                }
-            }
-            window.plugins.Shortcuts.setDynamic([shortcut], function() {
-                //window.alert('Shortcuts were applied successfully');
-            }, function(error) {
-                //window.alert('Error: ' + error);
-            })
-        }
 
     </script>
     </body>

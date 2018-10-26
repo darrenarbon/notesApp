@@ -1,6 +1,12 @@
 <div class="catHeader">{{categoryName}}</div>
-<note ng-repeat="note in filtered = (notes | orderBy:orderByWhat : reverse | filterNotes: showAllItemsInDisplay)" info="note" id="note.note_id" ng-model="showAllItemsInDisplay"></note>
+<note ng-repeat="note in filtered = (notes | orderBy:orderByWhat : reverse | filterNotes: false) track by $index" info="note" id="note.note_id"></note>
 <div class="noNotesText" ng-if="filtered.length == 0">There are no notes here....</div>
+<div class="text-center mt-2">
+    <button class="btn btn-success btn-sm" ng-click="showComp = !showComp">Show/Hide Completed Tasks</button>
+</div>
+<div ng-show="showComp">
+    <note ng-repeat="note in filtered = (notes | orderBy:orderByWhat : reverse | filterNotes: true) track by $index" info="note" id="note.note_id"></note>
+</div>
 
 <div class="addNewButton" ng-if="categoryId">
     <a ng-href="#!/categories/{{categoryId}}/notes/newnote">

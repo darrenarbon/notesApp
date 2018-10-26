@@ -314,9 +314,26 @@ img {
 .nav ul > li:hover ul {
     box-shadow: 0 0 3px #8d8d8e;
 }
-.nav ul > li:hover ul li {
+.nav ul > li:hover ul li.menuOption {
     height: 50px;
+    margin-bottom: 5px;
 }
+
+.nav ul > li:hover ul li.menuHeader {
+    height: 30px;
+    margin-bottom: 5px;
+}
+
+.nav ul > li:hover ul li.menuSubOption {
+    height: 30px;
+    margin-bottom: 5px;
+}
+
+.nav ul > li:hover ul li.menuOptionHeader {
+    height: 30px;
+    margin-bottom: 5px;
+}
+
 .nav ul li ul {
     background: white;
     position: absolute;
@@ -325,7 +342,7 @@ img {
     z-index: -1;
 }
 .nav ul li ul li {
-    width: 175px;
+    width: 200px;
     overflow: hidden;
     height: 0;
     -webkit-transition: height 200ms ease-in;
@@ -360,17 +377,26 @@ img {
 
 .menu {
     top: 50px;
-    right: 0px;
+    right: 0;
     border: 1px solid cornflowerblue;
     background-color: white;
     position: fixed;
     width: 175px;
 }
 
+.menuHeader {
+    font-size: 1.25rem;
+    background-color: #ccdefc;
+    line-height: 30px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+
 .menuOption {
     height: 50px;
     line-height: 50px;
-    padding-left: 10px;
+    padding-left: 5px;
     color: cornflowerblue;
     cursor: pointer;
     font-size: 1rem;
@@ -380,9 +406,24 @@ img {
     text-decoration: none;
 }
 
+.menuOptionHeader {
+    height: 30px;
+    line-height: 30px;
+    padding-left: 5px;
+    color: cornflowerblue;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bolder;
+}
+
+.menuOptionHeader:hover {
+    background-color: #ccdefc;
+    text-decoration: none;
+}
+
 .menuSubOption {
-    height: 50px;
-    line-height: 50px;
+    height: 30px;
+    line-height: 30px;
     padding-left: 20px;
     color: cornflowerblue;
     cursor: pointer;
@@ -406,6 +447,7 @@ img {
     width: 0.5rem;
     margin-right: 0.5rem;
     background-color: cornflowerblue;
+    margin-top: 15px;
 }
 
 .menuSubOptionAsc::after {
@@ -415,7 +457,7 @@ img {
     border-bottom: 2px solid black;
     width: 10px;
     height: 10px;
-    top: calc(50% - 4px);
+    top: 0;
     left: -20px;
     transform: translateY(-50%) rotate(-135deg);
     margin-left: 10px;
@@ -428,8 +470,64 @@ img {
     border-bottom: 2px solid black;
     width: 10px;
     height: 10px;
-    top: calc(50% - 4px);
+    top: 0;
     left: -20px;
     transform: translateY(-50%) rotate(45deg);
     margin-left: 10px;
 }
+
+.optionText {
+    width: 165px;
+    float: left;
+}
+
+.optionTitle {
+    font-size: 1rem;
+    line-height: 1.2rem;
+    width:100%;
+    font-weight: bolder;
+}
+
+.optionDesc {
+    font-size: 0.75rem;
+    line-height: 1rem;
+
+}
+
+.optionToggle {
+    width: 30px;
+    float: left;
+    margin: auto;
+    align-content: center;
+}
+
+.dateBox {
+    border: 2px solid red;
+    border-radius: 0.5rem;
+    width:100%;
+    height: 100%;
+    padding-left: 0px;
+    padding-right: 0px;
+    background-color: white;
+}
+
+.dateBox:hover {
+    background-color: #ccdefc;
+}
+
+.dateBox a {
+    width: 100%;
+    height: 100%;
+}
+
+.dateBox .dateDay {
+    font-size: 200%;
+    font-weight: bold;
+    text-align: center;
+}
+
+.dateBox .dateMonth {
+    font-size: 75%;
+    text-transform: uppercase;
+}
+

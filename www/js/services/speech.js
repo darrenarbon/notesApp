@@ -6,7 +6,6 @@ app.service('speech', function ($q,NoteService) {
                     return window.speechRecognition.hasPermission();
                 }
             }).then(function (hasPermission) {
-
                 function startRecognition() {
                     return window.speechRecognition.startRecognition({
                         language: "en-US",
@@ -17,8 +16,6 @@ app.service('speech', function ($q,NoteService) {
                         console.error(err);
                     });
                 }
-
-
                 if (!hasPermission) {
                     window.speechRecognition.requestPermission().then(function () {
                         startRecognition();
@@ -93,9 +90,9 @@ app.service('speech', function ($q,NoteService) {
             var capitalisedText = audio.charAt(0).toUpperCase() + audio.substr(1);
             //find "today" in the audio text
             var todayCounts = capitalisedText.search(/today/i);
-            var dateDue
+            var dateDue;
             if (todayCounts > 0) {
-                dateDue = new Date()
+                dateDue = new Date();
                 capitalisedText = capitalisedText.replace(/today/i, "");
             } else {
                 dateDue = ""
@@ -103,6 +100,4 @@ app.service('speech', function ($q,NoteService) {
             return new NoteService.NewNoteObject(capitalisedText, "", dateDue, "", "");
         }
     };
-
-
 });
