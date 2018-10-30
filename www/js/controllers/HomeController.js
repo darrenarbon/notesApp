@@ -55,9 +55,11 @@ app.controller('HomeController', function($scope, menuOptions, $rootScope, dbCal
         $rootScope.orderByWhat = type;
     };
 
-    $scope.changeSettings = function(){
+    $scope.changeSettings = function(reloadPage){
         NoteService.saveSettings($rootScope.notedSettings).then(function(){
-            console.log("settings changed")
+            if(reloadPage === true){
+                $rootScope.$broadcast("SettingsLoaded")
+            }
         });
     };
 
@@ -66,4 +68,8 @@ app.controller('HomeController', function($scope, menuOptions, $rootScope, dbCal
             console.log("completed notes deleted")
         })
     };
+
+    $scope.searchNotes = function(){
+        $location.path("/categories/search/notes").search({search: $scope.searchText})
+    }
 });

@@ -8,8 +8,8 @@
             <button class="btn btn-xs" ng-class="info.class_name" ng-click="changeStatus(info, $event)">
                 {{info.status_name}}
             </button>
-            <img ng-src="{{info.starredImage}}" width="20px" height="20px" ng-click="starItem(info, $event);"/>
-            <!--<img ng-src="{{info.starredImage}}" width="20px" height="20px" ng-click="test($event);" />-->
+            <img ng-src="{{info.starredImage}}" class="star_{{info.starred}}" width="20px" height="20px" ng-click="starItem(info, $event);"/>
+            <div class="starOverlay" ng-if="info.starred > 0" ng-click="starItem(info, $event);">{{info.starred}}</div>
             <img ng-src="{{info.actionImage}}" width="20px" height="20px" ng-click="deleteItem(info, $event)"/>
         </div>
 

@@ -69,8 +69,6 @@ app.service('dbCall', function ($http, $q) {
             var prom7 = doDBTransaction("UPDATE notes set categories_id = -1 where (categories_id = '') OR (categories_id IS NULL) OR (categories_id = '0')", [], "updated notes categories", "notes could not be updated");
             var prom8 = doDBTransaction("ALTER TABLE notes add column add_to_calendar integer", [], "add_to_calendar added to notes table", "add_to_calendar already in notes table");
             var prom9 = doDBTransaction("ALTER TABLE notes add column calendar_id integer", [], "calendar_id added to notes table", "calendar_id already in notes table");
-            //doDBTransaction("DROP TABLE settings", [], "", "")
-            //doDBTransaction("DROP TABLE noted_settings", [], "", "")
             var prom10 = doDBTransaction("CREATE TABLE IF NOT EXISTS noted_settings (settings_id integer primary key, add_to_calendar_default integer default(0), allow_notifications integer default(0), allow_calendar_integration integer default(0))", [], "Status table created", "Status table not created");
             var prom11 = doDBTransaction("select * from noted_settings where settings_id = ?", [1], "settings checked", "settings unable to be checked").then(function (res) {
                 if (res.rows.length === 0) {
@@ -79,6 +77,9 @@ app.service('dbCall', function ($http, $q) {
                 resolve(res)
             });
 
+            //version 1.83 database changes
+            var prom14 = doDBTransaction("ALTER TABLE noted_settings add column show_5_days integer default(1)", [], "show_5_days added to settings table", "show_5_days already in settings table");
+            var prom15 = doDBTransaction("ALTER TABLE noted_settings add column show_priority_list integer default(1)", [], "show_priority_list added to settings table", "show_priority_list already in settings table");
 
             //insert the statuses into the status table
             var prom12 = doDBTransaction("select * from status", [], "status DB queried", "status DB unable to be queried").then(function (res) {
@@ -93,13 +94,13 @@ app.service('dbCall', function ($http, $q) {
             });
 
             //update the version number
-            var prom13 = doDBTransaction("select * from version where version = ?", ["1.82"], "version number checked", "version number unable to be checked").then(function (res) {
+            var prom13 = doDBTransaction("select * from version where version = ?", ["1.85"], "version number checked", "version number unable to be checked").then(function (res) {
                 if (res.rows.length === 0) {
-                    doDBTransaction("INSERT INTO version (version, release_date) values(?,?)", ["1.82", "26/10/2018"], "version added to the DB", "version cannot be added to db");
+                    doDBTransaction("INSERT INTO version (version, release_date) values(?,?)", ["1.85", "30/10/2018"], "version added to the DB", "version cannot be added to db");
                 }
                 resolve(res)
             });
-            $q.all([prom1, prom2, prom3, prom4, prom5, prom6, prom7, prom8, prom9, prom10, prom11, prom12, prom13]).then(function(promises){
+            $q.all([prom1, prom2, prom3, prom4, prom5, prom6, prom7, prom8, prom9, prom10, prom11, prom12, prom13, prom14, prom15]).then(function(promises){
                 resolve("All Done")
             })
         })
@@ -123,5 +124,22 @@ Speed optimisations, removed redundant code, switched code where possible to mak
 Added "$scope.$on('$viewContentLoaded', function()" for all controllers to minimise the calls
 Added button to show completed tasks which show below.
 Added colours to the calendar view
+Redesigned menu
+
+Version 1.83 - 26th October
+Routing changes so now when you add a new note it will always take you to the list of the note
+Added two new fields into the settings table - show 5 days and show priority
+Added functionality to show/hide the 5 days and priority where needed
+Added $on and $broadcast to manage showing the cat_list only when the settings are loaded.
+
+Version 1.84 - 30th October
+Added tasks due on the 5 day view
+Added new task on the 5 day view which auto creates the due date as the day you clicked
+On the Day view, the plus button is added which also adds the due date
+On the day view, the add by voice button auto adds that date
+
+Version 1.85 - 30th October
+Search notes either in the title or the notes body.
+5 priority levels as shown in the stars.
 
 */

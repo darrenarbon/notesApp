@@ -62,13 +62,15 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
             cat.href = "#!/categories/" + cat.category_id + "/notes"
         });
         if (fullList) {
-            catList.unshift({
-                category_id: 0,
-                category_name: "Priority List",
-                category_colour: "#FF0000",
-                href: "#!/categories/0/notes",
-                noDelete: true
-            });
+            if ($rootScope.notedSettings.show_priority_list){
+                catList.unshift({
+                    category_id: 0,
+                    category_name: "Priority List",
+                    category_colour: "#FF0000",
+                    href: "#!/categories/0/notes",
+                    noDelete: true
+                });
+            }
             catList.push({
                 category_id: -1,
                 category_name: "Uncategorised",
@@ -88,7 +90,7 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
     }
 
     function getStats(category){
-        console.log("NoteService.getStats called: ", category);
+        //console.log("NoteService.getStats called: ", category);
         if (category.category_id !== 0) {
             NotesDAO.getNotes(category.category_id).then(function (result) {
                 var aActiveNotes = result.filter(function (note) {
@@ -126,6 +128,19 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
             } else if (noteID) {
                 NotesDAO.getNoteById(noteID).then(function(result){
                     result.forEach(function(note) {
+                        ammendNoteObj(note)
+                    });
+                    resolve(result)
+                });
+            }
+        });
+    };
+
+    this.searchNotes = function(searchText) {
+        return $q(function (resolve, reject) {
+            if(searchText) {
+                NotesDAO.getNotes("search", searchText).then(function (result) {
+                    result.forEach(function (note) {
                         ammendNoteObj(note)
                     });
                     resolve(result)
@@ -233,7 +248,7 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
 
     this.loadCategories = function(catId, fullList, addNew) {
         //catId loads a specific category, fullList adds the priority and uncategorised to the list.
-        console.log("NoteService.loadCategories called: ", catId, fullList, addNew);
+        //console.log("NoteService.loadCategories called: ", catId, fullList, addNew);
         return $q(function (resolve, reject) {
             if(catId) {
                 NotesDAO.getCategoryById(catId).then(function(data){

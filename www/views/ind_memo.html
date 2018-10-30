@@ -1,9 +1,16 @@
 <div class="note" ng-class="note.class" style="border-left: 10px solid {{note.category_colour}}">
     <h1>{{note.title}}</h1>
-    <button class="btn btn-xs" ng-class="note.class_name" ng-click="changeStatus(note)">
-        {{note.status_name}}
-    </button>
-    <img ng-src="{{note.starredImage}}" width="20px" height="20px" ng-click="starItem(note)" />
+    <div>
+        <div class="float-left mr-3" style="position: relative">
+            <img ng-src="{{note.starredImage}}" class="star_{{note.starred}}" width="20px" height="20px" ng-click="starItem(note);"/>
+            <div class="starOverlayNote" ng-if="note.starred > 0" ng-click="starItem(note)">{{note.starred}}</div>
+        </div>
+        <div>
+            <button class="btn btn-xs" ng-class="note.class_name" ng-click="changeStatus(note)">
+                {{note.status_name}}
+            </button>
+        </div>
+    </div>
     <hr class="underTitle">
     <span class="indivNoteText">
          {{note.notes}}

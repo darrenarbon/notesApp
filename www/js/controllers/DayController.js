@@ -1,4 +1,4 @@
-app.controller('DayController', function($scope, $location, NoteService, $routeParams, $filter) {
+app.controller('DayController', function($scope, $location, NoteService, $routeParams, speech) {
     $scope.$on('$viewContentLoaded', function() {
         //sort the dates out
         var dayWanted = new Date();
@@ -11,7 +11,7 @@ app.controller('DayController', function($scope, $location, NoteService, $routeP
         var dayAfterWantedSimple = new Date(dayAfterWanted.getFullYear(), dayAfterWanted.getMonth(), dayAfterWanted.getDate());
         var dayAfterWantedMS = Date.parse(dayAfterWantedSimple);
 
-        $scope.currentDay = $filter('date')(dayWantedSimple, "mediumDate");
+        $scope.currentDay = dayWantedSimple.getTime();
 
         //daynum in route will be days from today, 0 = today, 1 = tomorrow etc
         NoteService.loadNotes("all").then(function(data){
@@ -22,5 +22,16 @@ app.controller('DayController', function($scope, $location, NoteService, $routeP
                 }
             });
         })
-    })
+    });
+
+    $scope.voiceAdd = function(dataObj) {
+        speech.getNote().then(function(data){
+            if (data.date_due === "" && dataObj.date_due !== ""){
+                data.date_due = new Date(dataObj.date_due)
+            }
+            NoteService.addNote(undefined, data).then(function(data){
+                $scope.loadNotes();
+            })
+        })
+    };
 });

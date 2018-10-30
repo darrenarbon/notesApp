@@ -1,7 +1,11 @@
 app.controller('NewNoteController', function($scope, dbCall, $location, $routeParams, Camera, NoteService, NotesDAO) {
     $scope.$on('$viewContentLoaded', function() {
         //setup blank note
-        $scope.note = new NoteService.NewNoteObject("", "", "", "-1", "img/blank_img.png");
+        var dueDate;
+        if ($location.search()['day']){
+            dueDate = new Date(parseInt($location.search()['day']));
+        }
+        $scope.note = new NoteService.NewNoteObject("", "", dueDate, "-1", "img/blank_img.png");
 
         NotesDAO.loadSettings().then(function(result){
             $scope.notedSettings = result[0]
@@ -37,11 +41,7 @@ app.controller('NewNoteController', function($scope, dbCall, $location, $routePa
     $scope.submitNote = function(id){
         $scope.note.categories_id = ($scope.selectedCategory === undefined) ? null : $scope.selectedCategory.category_id;
         NoteService.addNote(id, $scope.note).then(function(data){
-            if (id){
-                $location.path("/categories/" + $routeParams.catid + "/notes/")
-            } else {
-                $location.path("/categories/" + $routeParams.catid + "/notes/")
-            }
+            $location.path("/categories/" + $scope.note.categories_id + "/notes/")
         })
     };
 

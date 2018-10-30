@@ -44,13 +44,18 @@ app.service('NotesDAO', function ($q, dbCall) {
     };
 
     //notes functions
-    this.getNotes = function(catID){
+    this.getNotes = function(catID, searchText){
         var baseSQL;
         var baseParams = [];
         if (catID === "99999") {
             baseSQL = "Select * from notes left join categories c on notes.categories_id=c.category_id left join status s on notes.status_id=s.status_id where (notes.categories_id = '') OR (notes.categories_id IS NULL) OR (notes.categories_id =0) OR (notes.categories_id =-1)";
         } else if (catID === "all") {
             baseSQL = "Select * from notes left join categories c on notes.categories_id=c.category_id left join status s on notes.status_id=s.status_id where notes.complete = 0";
+        }else if (catID === "alldue"){
+            baseSQL = "Select * from notes left join categories c on notes.categories_id=c.category_id left join status s on notes.status_id=s.status_id where notes.complete = 0 AND NOT notes.date_due ='' ";
+        } else if (catID === "search"){
+            baseSQL = "Select * from notes left join categories c on notes.categories_id=c.category_id left join status s on notes.status_id=s.status_id where notes.complete = 0 AND (notes.title LIKE ? OR notes.notes LIKE ?)";
+            baseParams = ['%' + searchText + '%', '%' + searchText + '%']
         } else {
             baseSQL = "Select * from notes left join categories c on notes.categories_id=c.category_id left join status s on notes.status_id=s.status_id where notes.categories_id = ?";
             baseParams = [parseInt(catID)]
@@ -128,7 +133,7 @@ app.service('NotesDAO', function ($q, dbCall) {
 
     this.saveSettings = function(data){
         return $q(function (resolve, reject) {
-            dbCall.modifyData("update noted_settings set add_to_calendar_default = ?, allow_notifications = ?, allow_calendar_integration = ? where settings_id=?", [data.add_to_calendar_default, data.allow_notifications, data.allow_calendar_integration, 1]).then(function(result) {
+            dbCall.modifyData("update noted_settings set add_to_calendar_default = ?, allow_notifications = ?, allow_calendar_integration = ?, show_5_days=?, show_priority_list=? where settings_id=?", [data.add_to_calendar_default, data.allow_notifications, data.allow_calendar_integration, data.show_5_days, data.show_priority_list, 1]).then(function(result) {
                 resolve(result)
             })
         })

@@ -49,6 +49,7 @@ app.run(function($rootScope, NoteService, $window, dbCall) {
     dbCall.setupData().then(function(res){
         NoteService.loadSettings().then(function(result){
             $rootScope.notedSettings = result;
+            $rootScope.$broadcast("SettingsLoaded")
         });
     });
 

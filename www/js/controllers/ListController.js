@@ -12,6 +12,11 @@ app.controller('ListController', function($scope, $routeParams, speech, NoteServ
                 $scope.categoryName = "Priority List";
                 $rootScope.orderByWhat = '$index'
             })
+        } else if ($routeParams.catid === "search") {
+            NoteService.searchNotes($routeParams.search).then(function(data){
+                $scope.notes = data;
+                $scope.categoryName = "Including: " + $routeParams.search;
+            })
         } else {
             //load the relevant category
             $rootScope.orderByWhat = 'date_added_numeric';
@@ -54,7 +59,7 @@ app.controller('ListController', function($scope, $routeParams, speech, NoteServ
     $scope.starItem = function(note, $event) {
         $event.stopPropagation();
         $event.preventDefault();
-        note.starred = (note.starred === 0) ? 1 : 0;
+        note.starred = (note.starred === 0) ? 5 : note.starred = note.starred - 1;
         NoteService.starNote(note.note_id, note.starred).then(function(data){
             NoteService.ammendNoteObj(note)
         })

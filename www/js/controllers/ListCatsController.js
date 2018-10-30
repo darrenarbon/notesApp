@@ -1,12 +1,28 @@
-app.controller('ListCatsController', function($scope, $location, speech, NoteService, NotesDAO, CalendarService) {
+app.controller('ListCatsController', function($scope, $location, speech, NoteService, CalendarService, $rootScope) {
     $scope.categories = [];
 
+    $scope.$on('SettingsLoaded', function() {
+        loadData()
+    });
+
     $scope.$on('$viewContentLoaded', function() {
+        if ($rootScope.notedSettings){
+            loadData()
+        }
+    });
+
+    function loadData(){
         NoteService.loadCategories(undefined, true).then(function(data){
             $scope.categories = data;
-            $scope.days = CalendarService.create5Days()
+            if ($rootScope.notedSettings.show_5_days === true){
+                CalendarService.create5Days().then(function(data){
+                    $scope.days = data;
+                })
+            } else {
+                $scope.days = []
+            }
         });
-    });
+    }
 
     //delete an item
     $scope.deleteCat = function(category, $event) {
@@ -31,4 +47,10 @@ app.controller('ListCatsController', function($scope, $location, speech, NoteSer
             })
         })
     };
+
+    $scope.addNewNoteToDay = function(day, $event){
+        $event.stopPropagation();
+        $event.preventDefault();
+        $location.path("/categories/-1/notes/newnote").search({day: day})
+    }
 });

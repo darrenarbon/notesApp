@@ -16,7 +16,7 @@ app.controller('MemoController', function($scope,dbCall, $routeParams, checkDate
     };
 
     $scope.starItem = function(note) {
-        note.starred = (note.starred === 0) ? 1 : 0;
+        note.starred = (note.starred === 0) ? 5 : note.starred = note.starred - 1;
         NoteService.starNote(note.note_id, note.starred).then(function(data){
             NoteService.ammendNoteObj(note)
         })
