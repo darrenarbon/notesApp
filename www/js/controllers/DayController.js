@@ -1,4 +1,5 @@
-app.controller('DayController', function($scope, $location, NoteService, $routeParams, speech) {
+app.controller('DayController', function($scope, $timeout, NoteService, $routeParams, speech) {
+    $scope.loading = true;
     $scope.$on('$viewContentLoaded', function() {
         //sort the dates out
         var dayWanted = new Date();
@@ -20,7 +21,11 @@ app.controller('DayController', function($scope, $location, NoteService, $routeP
                 if (noteDueMS >= dayWantedMS && noteDueMS < dayAfterWantedMS){
                     return true;
                 }
+                
             });
+            $timeout(function() {
+                $scope.loading = false;
+            },0);
         })
     });
 

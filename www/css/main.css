@@ -13,9 +13,53 @@ html {
     overflow: scroll;
 }
 
-body {
+.whiteBack {
     background-color: #eaebed;
 }
+
+.blackBack {
+    background-color: black;
+    color: #eaebed;
+}
+
+.loadingScreen {
+    padding-top: 300px;
+    height: calc(100vh - 70px);
+    text-align: center;
+}
+
+.lds-ripple {
+    display: inline-block;
+    position: relative;
+    width: 64px;
+    height: 64px;
+  }
+  .lds-ripple div {
+    position: absolute;
+    border: 4px solid cornflowerblue;
+    opacity: 1;
+    border-radius: 50%;
+    animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  }
+  .lds-ripple div:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  @keyframes lds-ripple {
+    0% {
+      top: 28px;
+      left: 28px;
+      width: 0;
+      height: 0;
+      opacity: 1;
+    }
+    100% {
+      top: -1px;
+      left: -1px;
+      width: 58px;
+      height: 58px;
+      opacity: 0;
+    }
+  }
 
 a {
     color: inherit;
@@ -30,22 +74,31 @@ img {
 }
 
 .topBar {
-    height: 50px;
+    height: 40px;
     width: 100%;
     background-color: cornflowerblue;
-    font-size: 40px;
-    line-height: 50px;
+    font-size: 30px;
+    line-height: 40px;
     padding-left: 10px;
     padding-right: 10px;
-    box-shadow: 0px 3px 3px #A0A0A0;
     position: fixed;
     top: 0;
     z-index: 999;
 }
 
+.topBarBlack {
+    box-shadow: 0px 3px 3px #000000;
+    color: black;
+}
+
+.topBarWhite {
+    box-shadow: 0px 3px 3px #A0A0A0;
+
+}
+
 .logo {
     float: left;
-    width: 120px;
+    width: 100px;
 }
 
 .search {
@@ -53,8 +106,8 @@ img {
     justify-content: flex-end;
     display: flex;
     padding-top: 13px;
-    width: calc(100% - 155px);
-    height: 50px;
+    width: calc(100% - 200px);
+    height: 40px;
 }
 
 .search:hover .searchField {
@@ -83,21 +136,55 @@ img {
     margin-left: 10px;
 }
 
+.icon-container {
+    float: left;
+    display: flex;
+    height: 40px;
+    width: 100px
+}
+
+.menu-item {
+    margin-left: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    height: 25px;
+    width: 25px;
+}
+
 .contentDiv {
-    margin-top: 60px;
+    margin-top: 50px;
     width: 100%;
+}
+
+.new-list {
+    margin-left: 10px;
+    font-size: 15px;
+    color: #007bff;
+}
+
+.new-list-plus {
+    font-size: 25px;
 }
 
 .note {
     width: calc(100% - 15px);
-    background-color: white;
-    border-bottom: 1px solid #eaebed;
     padding-left: 10px;
     margin: 10px;
     box-shadow: 0 0 3px #8d8d8e;
     border-top-left-radius: 0.2em;
     border-bottom-left-radius: 0.2em;
+}
+
+.noteWhite {
     color: cornflowerblue;
+    background-color: white;
+    border-bottom: 1px solid #eaebed;
+}
+
+.noteBlack {
+    color: #eaebed;
+    background-color: #575757;
+    border-bottom: 1px solid #000000;
 }
 
 .noteList {
@@ -112,6 +199,7 @@ img {
 }
 .noteDueToday {
     background-color: #f7e4c5;
+    color: black;
 }
 
 .noteOverdue {
@@ -178,6 +266,16 @@ img {
     border: 0;
     height: 2px;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5), black);
+    margin-top:3px;
+    margin-bottom: 0;
+}
+
+.otherHRs {
+    border: 0;
+    height: 2px;
+    background-image: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5), black);
+    margin-top:3px;
+    margin-bottom: 3px;
 }
 
 .input-group-prepend {
@@ -205,43 +303,19 @@ img {
 }
 
 .addNewButton {
-    bottom: 20px;
-    position: fixed;
-    height: 50px;
-    width: 50px;
-    background-color: cornflowerblue;
-    border-radius: 50%;
-    display: flex;
-    color: white;
-    box-shadow: 3px 3px 10px #A0A0A0;
+    height: 20px;
+    width: 20px;
     cursor: pointer;
-    right: 20px;
 }
-.addNewButton:hover .plusSymbol {
-    opacity: 0;
-}
-.addNewButton:hover .twoLinks {
-    opacity: 1;
-    visibility: visible;
-    font-size: 16px;
+
+.ButtonWhite {
     color: white;
 }
 
-.addNewSwitcher {
-    transition: all 0.3s ease-in-out;
-}
-.addNewSwitcher:hover {
-    border-radius: 3%;
-    width: 120px;
+.ButtonBlack {
+    color: black;
 }
 
-.oneLinkHead {
-    font-size: 100%;
-}
-
-.oneLinkContent {
-    font-size: 75%;
-}
 
 .plusSymbol {
     opacity: 1;
@@ -253,26 +327,6 @@ img {
     position: absolute;
 }
 
-.twoLinks {
-    opacity: 0;
-    transition: all 0.3s ease-in-out;
-    text-align: center;
-    margin-left: 0px;
-    visibility: hidden;
-    font-size: 16px;
-    color: white;
-    min-width: 120px;
-    position: absolute;
-}
-
-.twoLinks--oneLink {
-    float: left;
-    margin-left: 12px;
-    margin-right: 6px;
-    margin-top: 2px;
-    min-width: 40px;
-}
-
 .voiceButton {
     bottom: 20px;
     position: fixed;
@@ -281,8 +335,6 @@ img {
     background-color: cornflowerblue;
     border-radius: 50%;
     display: flex;
-    color: white;
-    box-shadow: 3px 3px 10px #A0A0A0;
     cursor: pointer;
     left: 20px;
     text-align: center;
@@ -290,9 +342,8 @@ img {
 }
 
 .voiceIcon {
-    align-self: center;
-    height: 30px;
-    width: 30px;
+    height: 20px;
+    width: 20px;
 }
 
 .indivNoteText {
@@ -303,6 +354,13 @@ img {
     padding: 1px 5px;
     font-size: 12px;
     line-height: 1.5;
+    border-radius: 3px;
+}
+
+.btn-xxs {
+    padding: 1px 2px;
+    font-size: 10px;
+    line-height: 1;
     border-radius: 3px;
 }
 
@@ -521,22 +579,25 @@ img {
     margin-left: 10px;
 }
 
-.optionText {
-    width: 210px;
+.settingsButton {
+    margin-left: 10px;
+    width: 95%;
+}
+
+.settingsOption {
     float: left;
+    margin-left: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid cornflowerblue;
+    width: 95%;
 }
 
 .optionTitle {
-    font-size: 1rem;
-    line-height: 1.2rem;
     width:100%;
     font-weight: bolder;
 }
 
 .optionDesc {
-    font-size: 0.75rem;
-    line-height: 1rem;
-
 }
 
 .optionToggle {
@@ -569,6 +630,7 @@ img {
     font-size: 200%;
     font-weight: bold;
     text-align: center;
+    line-height: 1;
 }
 
 .dateBox .dateMonth {
@@ -622,8 +684,17 @@ img {
     font-weight: bold;;
 }
 
+.priority_button{
+    background-color: yellow;
+}
+
+.star_0 {
+
+}
+
 .star_2 {
     filter: hue-rotate(310deg); /*orange*/
+
 }
 
 .star_3 {
@@ -636,4 +707,23 @@ img {
 
 .star_5 {
     filter: hue-rotate(150deg); /*blue*/
+}
+
+.status_button {
+    height: 50px;
+}
+
+.status-header {
+    text-align: center;
+}
+
+.inline-form-control {
+    display: inline-block;
+    width: 150px;
+}
+
+.inline-buttons {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
 }

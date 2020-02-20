@@ -1,13 +1,13 @@
 <a ng-href="{{info.href}}">
-    <div class="note catList" style="border-left: 10px solid {{info.category_colour}}">
+    <div class="note catList" ng-class="settings.black_theme ? 'noteBlack' : 'noteWhite'" style="border-left: 10px solid {{info.category_colour}}">
         <div class="noteText">
             {{info.category_name}}
         </div>
         <div class="iconBar">
             <div class="totalNotes" ng-if="info.number_active_notes>0">{{info.number_active_notes}}</div>
             <div class="overDueNotes" ng-if="info.number_overdue_notes>0">{{info.number_overdue_notes}}</div>
-            <img class="iconBarImage" src="img/delete.png" width="20px" height="20px" ng-click="deleteCat(info, $event)" ng-if="!info.noDelete"/>
-            <img class="iconBarImage" src="img/edit.svg" width="20px" height="20px" ng-click="editCat(info.category_id, $event)" ng-if="!info.noDelete"/>
+            <img class="iconBarImage" src="img/delete.png" width="20px" height="20px" ng-click="deleteCat({cat: info, event: $event})" ng-if="!info.noDelete"/>
+            <img class="iconBarImage" src="img/edit.svg" width="20px" height="20px" ng-click="editCat({cat: info, event: $event})" ng-if="!info.noDelete"/>
         </div>
     </div>
 </a>

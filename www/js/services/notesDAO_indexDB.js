@@ -44,11 +44,27 @@ app.service('NotesDAO', function ($q, dbCall) {
     };
 
     //notes functions
-    this.getNotes = function(catID){
+    this.getNotes = function(catID, searchText){
         var baseSQL;
         var baseParams = [];
         return $q(function (resolve, reject) {
             if (catID === "99999") {
+                dbCall.getJoinedData(["notes", "categories", "status"], 0, "categories_id", [{pri_table: 'notes', pri_col: 'categories_id', other_table: 'categories', other_col: 'category_id'}, {pri_table: 'notes', pri_col: 'status_id', other_table: 'status', other_col: 'status_id'}]).then(function(result){
+                    resolve(result)
+                });
+            } else if (catID === "all") {
+                dbCall.getJoinedData(["notes", "categories", "status"], 0, "complete", [{pri_table: 'notes', pri_col: 'categories_id', other_table: 'categories', other_col: 'category_id'}, {pri_table: 'notes', pri_col: 'status_id', other_table: 'status', other_col: 'status_id'}]).then(function(result){
+                    resolve(result)
+                });
+            } else if (catID === "alldue") { //do
+                dbCall.getJoinedData(["notes", "categories", "status"], 0, "categories_id", [{pri_table: 'notes', pri_col: 'categories_id', other_table: 'categories', other_col: 'category_id'}, {pri_table: 'notes', pri_col: 'status_id', other_table: 'status', other_col: 'status_id'}]).then(function(result){
+                    resolve(result)
+                });
+            } else if (catID === "priority") { //do
+                dbCall.getJoinedData(["notes", "categories", "status"], 0, "categories_id", [{pri_table: 'notes', pri_col: 'categories_id', other_table: 'categories', other_col: 'category_id'}, {pri_table: 'notes', pri_col: 'status_id', other_table: 'status', other_col: 'status_id'}]).then(function(result){
+                    resolve(result)
+                });
+            } else if (catID === "search") { //do
                 dbCall.getJoinedData(["notes", "categories", "status"], 0, "categories_id", [{pri_table: 'notes', pri_col: 'categories_id', other_table: 'categories', other_col: 'category_id'}, {pri_table: 'notes', pri_col: 'status_id', other_table: 'status', other_col: 'status_id'}]).then(function(result){
                     resolve(result)
                 });
@@ -63,6 +79,14 @@ app.service('NotesDAO', function ($q, dbCall) {
     this.getNoteById = function(id) {
         return $q(function (resolve, reject) {
             dbCall.getJoinedData(["notes", "categories", "status"], parseInt(id), "note_id", [{pri_table: 'notes', pri_col: 'categories_id', other_table: 'categories', other_col: 'category_id'}, {pri_table: 'notes', pri_col: 'status_id', other_table: 'status', other_col: 'status_id'}]).then(function(result){
+                resolve(result)
+            })
+        })
+    };
+
+    this.getChildNotes = function(id) {
+        return $q(function (resolve, reject){
+            dbCall.getJoinedData(["notes", "categories", "status"], parseInt(id), "parent_note_id", [{pri_table: 'notes', pri_col: 'categories_id', other_table: 'categories', other_col: 'category_id'}, {pri_table: 'notes', pri_col: 'status_id', other_table: 'status', other_col: 'status_id'}]).then(function(result){
                 resolve(result)
             })
         })
@@ -118,7 +142,7 @@ app.service('NotesDAO', function ($q, dbCall) {
 
     this.loadSettings = function(){
         return $q(function (resolve, reject) {
-            dbCall.getAllData("settings").then(function(result) {
+            dbCall.getAllData("noted_settings").then(function(result) {
                 resolve(result)
             })
         })
@@ -126,7 +150,7 @@ app.service('NotesDAO', function ($q, dbCall) {
 
     this.saveSettings = function(data){
         return $q(function (resolve, reject) {
-            dbCall.update("settings", 1, [["add_to_calendar_default", data.add_to_calendar_default], ["allow_notifications", data.allow_notifications],["allow_calendar_integration", data.allow_calendar_integration]]).then(function(result) {
+            dbCall.update("noted_settings", 1, [["add_to_calendar_default", data.add_to_calendar_default], ["allow_notifications", data.allow_notifications],["allow_calendar_integration", data.allow_calendar_integration], ["show_5_days", data.show_5_days], ["show_priority_list", data.show_priority_list], ["show_status_tracker", data.show_status_tracker]]).then(function(result) {
                 resolve(result)
             })
         })

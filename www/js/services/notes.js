@@ -27,7 +27,7 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
                 if (result.length > 0){
                     Object.keys(result[0]).forEach(function(key, index){
                         if (key !== "settings_id"){
-                            result[0][key] = (parseInt(result[0][key])) ? true : false
+                            if (result[0][key] === 0 || result[0][key] === 1) result[0][key] = (parseInt(result[0][key])) ? true : false
                         }
                     });
                     resolve(result[0])
@@ -43,7 +43,7 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
             //create a copy of the object to avoid having to reassign values afterwards
             var dataToSend = Object.assign({}, data);
             Object.keys(dataToSend).forEach(function(key, index){
-                if (key !== "settings_id"){
+                if (key !== "settings_id" && key !== "sort_order"){
                     dataToSend[key] = (dataToSend[key]) ? "1" : "0"
                 }
             });
@@ -58,6 +58,7 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
     });
 
     function addDynamicCategories(catList, fullList, addNew) {
+        console.log("NoteService.addDynamicCategories: ", catList, fullList, addNew)
         catList.forEach(function (cat) {
             cat.href = "#!/categories/" + cat.category_id + "/notes"
         });
@@ -68,6 +69,15 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
                     category_name: "Priority List",
                     category_colour: "#FF0000",
                     href: "#!/categories/0/notes",
+                    noDelete: true
+                });
+            }
+            if ($rootScope.notedSettings.show_status_tracker){
+                catList.unshift({
+                    category_id: -2,
+                    category_name: "Status Tracker",
+                    category_colour: "cornflowerblue",
+                    href: "#!/statustracker",
                     noDelete: true
                 });
             }
@@ -136,6 +146,17 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
         });
     };
 
+    this.loadChildNotes = function(parentID) {
+        return $q(function (resolve, reject) {
+            NotesDAO.getChildNotes(parentID).then(function(result){
+                result.forEach(function(note) {
+                    ammendNoteObj(note)
+                });
+                resolve(result)
+            });
+        });
+    };
+
     this.searchNotes = function(searchText) {
         return $q(function (resolve, reject) {
             if(searchText) {
@@ -153,7 +174,7 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
         return $q(function (resolve, reject) {
             //get all the data which has a date_due set and is currently not complete
             var importantNotes = [];
-            dbCall.getData("Select * FROM notes left join categories c on notes.categories_id=c.category_id left join status s on notes.status_id=s.status_id where complete=0 and NOT date_due = ''").then(function (result) {
+            NotesDAO.getNotes("priority").then(function (result) {
                 //get the overdue ones first
                 result.forEach(function (note) {
                     if (checkDates.checkOverDue(note.date_due) === "noteOverdue") {
@@ -191,7 +212,9 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
                 CalendarService.deleteEvent(note.calendar_id)
             }
             NotesDAO.completeNote(note.note_id, note.complete).then(function(result) {
-                resolve(result)
+                NotesDAO.statusUpdateNote(note.note_id, 6).then(function (result) {
+                    resolve(result)
+                })
             })
         })
     };
@@ -248,7 +271,7 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
 
     this.loadCategories = function(catId, fullList, addNew) {
         //catId loads a specific category, fullList adds the priority and uncategorised to the list.
-        //console.log("NoteService.loadCategories called: ", catId, fullList, addNew);
+        console.log("NoteService.loadCategories:", catId, fullList, addNew);
         return $q(function (resolve, reject) {
             if(catId) {
                 NotesDAO.getCategoryById(catId).then(function(data){
@@ -300,6 +323,25 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
         })
     };
 
+    this.cloneSubTask = function(noteid, noteToCloneID){
+        return $q(function (resolve, reject) {
+            NoteService.loadNotes(undefined, noteToCloneID).then(function(note){
+                note = note[0];
+                note.parent_note_id = noteid;
+                NotesDAO.addNewNote(note).then(function (new_child_note) {
+                    var childNoteId = new_child_note.insertId
+                    NoteService.loadChildNotes(noteToCloneID).then(function(childNotes){
+                        childNotes.forEach(function(childNote){
+                            childNote.parent_note_id = childNoteId
+                            NotesDAO.addNewNote(childNote)
+                        });
+                        resolve(noteid)
+                    })
+                })
+            })
+        })
+    };
+
     this.NewNoteObject = function(title, notes, date_due, categories_id, photo) {
         this.title              = title;
         this.notes              = notes;
@@ -311,6 +353,7 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
         this.complete           = 0;
         this.starred            = 0;
         this.calendar_id        = '';
+        this.parent_note_id     = '';
 
         if($rootScope.notedSettings === undefined){
             var newObject = this;
@@ -330,6 +373,9 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
     //set classes, images etc. for each note
     function ammendNoteObj(note) {
         NotesDAO.getStatuses().then(function(result) {
+            if (note.date_due === null) {
+                note.date_due = ''
+            }
             note.class = checkDates.checkOverDue(note.date_due);
             note.actionImage = (note.complete == 0) ? "img/delete.png" : "img/add.png";
             note.starredImage = (note.starred == 0) ? "img/empty_star.png" : "img/full_star.png";
@@ -346,5 +392,69 @@ app.service('NoteService', function (dbCall, $rootScope, $q, checkDates, NotesDA
             }
             if (note.categories_id == null) note.categories_id = "-1"
         });
+    }
+
+    this.loadStatuses = function(){
+        return $q(function (resolve, reject) {
+            NotesDAO.getStatuses().then(function(statuses){
+                var statusPromises = [];
+                statuses.forEach(status => {
+                    var promise = NotesDAO.getNotesForStatus(status.status_id)
+                    statusPromises.push(promise)
+                })
+                $q.all(statusPromises).then(function(notes) {
+                    statuses.forEach((status, index) => {
+                        status.noteCount = notes[index].length
+                    })
+                })
+                resolve(statuses)
+            })
+        });
+    }
+
+    this.loadStatusNotes = function(id) {
+        return $q(function (resolve, reject) {
+            NotesDAO.getNotesForStatus(id).then(function(notes){
+                notes.forEach(function(note) {
+                    ammendNoteObj(note)
+                });
+                resolve(notes)
+            })
+        });
+    }
+
+    this.loadPriorityNotes = function(id) {
+        return $q(function (resolve, reject) {
+            NotesDAO.getNotesForPriority(id).then(function(notes){
+                notes.forEach(function(note) {
+                    ammendNoteObj(note)
+                });
+                resolve(notes)
+            })
+        });
+    }
+
+    this.loadPriorities = function() {
+        return $q(function (resolve, reject) {
+            var priorites = [
+                {priorityID: 0},
+                {priorityID: 1},
+                {priorityID: 2},
+                {priorityID: 3},
+                {priorityID: 4},
+                {priorityID: 5}
+            ]
+            var priorityPromises = [];
+            priorites.forEach(priority => {
+                var promise = NotesDAO.getNotesForPriority(priority.priorityID)
+                priorityPromises.push(promise)
+            })
+            $q.all(priorityPromises).then(function(notes) {
+                priorites.forEach((status, index) => {
+                    status.noteCount = notes[index].length
+                })
+            })
+            resolve(priorites)
+        })
     }
 });

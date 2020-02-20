@@ -3,7 +3,7 @@ var app = angular.module('NotesApp', ['ngRoute', 'angular.filter']);
 app.config(function ($routeProvider) {
     $routeProvider
         //list the categories
-        .when('/categories', {
+        .when('/categories/', {
             controller: 'ListCatsController',
             templateUrl: 'views/list_cats.html'
         })
@@ -27,6 +27,11 @@ app.config(function ($routeProvider) {
             controller: 'NewNoteController',
             templateUrl: 'views/newnote.html'
         })
+        //add a new subnote to a note
+        .when('/categories/:catid/notes/newnote/:parentnoteid', {
+            controller: 'NewNoteController',
+            templateUrl: 'views/newnote.html'
+        })
         //view a particular note
         .when('/categories/:catid/notes/:noteid', {
             controller: 'MemoController',
@@ -40,8 +45,24 @@ app.config(function ($routeProvider) {
             controller: 'DayController',
             templateUrl: 'views/day.html'
         })
+        .when('/statustracker', {
+            controller: 'StatusController',
+            templateUrl: 'views/status.html'
+        })
+        .when('/statustracker/status/:statusid/notes', {
+            controller: 'ListController',
+            templateUrl: 'views/list.html'
+        })
+        .when('/statustracker/priority/:priorityid/notes', {
+            controller: 'ListController',
+            templateUrl: 'views/list.html'
+        })
+        .when('/settings', {
+            controller: 'SettingsController',
+            templateUrl: 'views/settings.html'
+        })
         .otherwise({
-            redirectTo: '/categories'
+            redirectTo: '/categories/'
         });
 });
 
@@ -49,6 +70,7 @@ app.run(function($rootScope, NoteService, $window, dbCall) {
     dbCall.setupData().then(function(res){
         NoteService.loadSettings().then(function(result){
             $rootScope.notedSettings = result;
+            $rootScope.orderByWhat = result.sort_order
             $rootScope.$broadcast("SettingsLoaded")
         });
     });

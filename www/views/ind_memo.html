@@ -1,4 +1,7 @@
-<div class="note" ng-class="note.class" style="border-left: 10px solid {{note.category_colour}}">
+<div ng-show="loading" class="loadingScreen">
+    <div class="lds-ripple"><div></div><div></div></div>
+</div>
+<div ng-show="!loading" class="note" ng-class="note.class ? note.class : (notedSettings.black_theme ? 'noteBlack' : 'noteWhite')" style="border-left: 10px solid {{note.category_colour}}">
     <h1>{{note.title}}</h1>
     <div>
         <div class="float-left mr-3" style="position: relative">
@@ -16,11 +19,26 @@
          {{note.notes}}
     </span>
     <img ng-src="{{note.photo}}" ng-class="imageClass">
-    <hr>
-    <strong>List: </strong>{{note.category_name}}<br>
+    <hr class="otherHRs">
+    <span ng-if="children.length > 0"><strong>Sub Tasks</strong></span>
+    <note ng-repeat="child in filtered = (children | orderBy:orderByWhat : reverse) track by $index" info="child" id="child.note_id" settings="notedSettings"></note>
+    <hr class="otherHRs" ng-if="children.length > 0">
+    <span ng-if="note.parent_note_id > 0">
+        <strong>Parent: </strong> <a ng-href="#!/categories/{{note.categories_id}}/notes/{{note.parent_note_id}}" class="btn btn-outline-primary btn-xs">View</a>
+    </span>
+    <br>
+    <strong>List: </strong><a ng-href="#!/categories/{{note.categories_id}}/notes" class="btn btn-outline-primary btn-xs">{{note.category_name}}</a><br>
     <strong>Date Added: </strong>{{note.date_added | newDate | date: "mediumDate"}}<br>
     <strong>Date Due: </strong>{{note.date_due | newDate | date: "mediumDate"}}
     <hr>
-    <button class="btn btn-success mb-3" ng-click="editItem(note.note_id)">Edit</button>
-    <button class="btn btn-danger mb-3" ng-click="deleteItem(note)">Note Finished</button>
+    <div class="inline-buttons">
+        <button class="btn btn-success mb-3 mr-2" ng-click="editItem(note.note_id)">Edit</button>
+        <button class="btn btn-danger mb-3 mr-2" ng-click="deleteItem(note)">Note Finished</button>
+        <button class="btn btn-info mb-3 mr-2" ng-click="addSubItem(note)">Add Subtask</button>
+        <button class="btn btn-info mb-3 mr-2" ng-click="cloneSubTask = !cloneSubTask">Clone Subtask</button>
+        <select ng-if="cloneSubTask" class="form-control inline-form-control mb-3 mr-2" ng-model="clonableNote.note" ng-options="note.title for note in allNotes">
+            <option>Select a note</option>
+        </select>
+        <button ng-if="cloneSubTask" class="btn btn-success mb-3" ng-click="doCloneSubTask()">Clone</button>
+    </div>
 </div>

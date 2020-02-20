@@ -34,7 +34,11 @@ app.service('CalendarService', function (dbCall, $rootScope, $q, checkDates) {
         return $q(function (resolve, reject) {
             NoteService.loadNotes("alldue").then(function (notes) {
                 var aMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                var aColours = ["rgba(255,0,0, 0.25)", "rgba(255,158,0, 0.25)", "rgba(255,255,0, 0.25)", "rgba(127,255,0, 0.25)", "rgba(0,255,0, 0.25)"];
+                if($rootScope.notedSettings.black_theme){
+                    var aColours = ["rgba(255,0,0, 0.5)", "rgba(255,158,0, 0.5)", "rgba(255,255,0, 0.5)", "rgba(127,255,0, 0.5)", "rgba(0,255,0, 0.5)"];
+                } else {
+                    var aColours = ["rgba(255,0,0, 0.25)", "rgba(255,158,0, 0.25)", "rgba(255,255,0, 0.25)", "rgba(127,255,0, 0.25)", "rgba(0,255,0, 0.25)"];
+                }
                 days = [];
                 for (var i = 0; i < 5; i++) {
                     var dayWanted = new Date();

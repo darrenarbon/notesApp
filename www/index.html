@@ -20,10 +20,13 @@
         <script src="js/core/sqlite-plugin.js"></script>
         <script src="js/core/angular-filter.js"></script>
 
+        <!--Dexie for indexedDB-->
+        <script src="js/core/dexie_2.0.4.js"></script>
+
     </head>
-    <body ng-app="NotesApp">
+    <body ng-app="NotesApp" ng-class="notedSettings.black_theme ? 'blackBack' : 'whiteBack'">
     <div ng-controller="HomeController">
-        <div class="topBar">
+        <div class="topBar" ng-class="notedSettings.black_theme ? 'topBarBlack' : 'topBarWhite'">
             <a href="#!/categories">
                 <div class="logo">
                     noted.
@@ -33,65 +36,10 @@
                 <input type="text" id="searchBar" class="form-control searchField" autofocus ng-model="searchText" ng-keypress="($event.charCode==13)? searchNotes() : return">
                 <img src="img/search.png" class="searchImage" onclick="document.getElementById('searchBar').focus()">
             </div>
-            <div class="menuButton nav">
-                <ul>
-                    <li>
-                        <a><img src="img/menu.png" class="menuIcon"></a>
-                        <ul>
-                            <li class="menuHeader">Options</li>
-                            <li class="menuOption">
-                                <div class="optionText">
-                                    <div class="optionTitle">Allow Notifications</div>
-                                    <div class="optionDesc">Automatically adds notifications when you set a due date.</div>
-                                </div>
-                                <div class="optionToggle">
-                                    <input type="checkbox" ng-change="changeSettings()" ng-model="notedSettings.allow_notifications" ng-model="notedSettings.allow_notifications" class="catBox">
-                                </div>
-                            </li>
-                            <li class="menuOption">
-                                <div class="optionText">
-                                    <div class="optionTitle">Calendar Integration</div>
-                                    <div class="optionDesc">Enable the option to add the note to the phones calendar.</div>
-                                </div>
-                                <div class="optionToggle">
-                                    <input type="checkbox" ng-change="changeSettings()" ng-model="notedSettings.allow_calendar_integration" ng-checked="notedSettings.allow_calendar_integration" class="catBox">
-                                </div>
-                            </li>
-                            <li class="menuOption">
-                                <div class="optionText">
-                                    <div class="optionTitle">Add to Calendar</div>
-                                    <div class="optionDesc">Set the 'add to calendar' option on the add new note page to on by default.</div>
-                                </div>
-                                <div class="optionToggle">
-                                    <input type="checkbox" ng-change="changeSettings()" ng-model="notedSettings.add_to_calendar_default" ng-model="notedSettings.allow_notifications" class="catBox">
-                                </div>
-                            </li>
-                            <li class="menuOptionHeader">Sort Notes By:</li>
-                            <li class="menuSubOption menuSubOptionSelected menuSubOptionAsc" ng-click="changeSort('date_added_numeric', $event)">Date Added</li>
-                            <li class="menuSubOption" ng-click="changeSort('date_due_numeric', $event)">Date Due</li>
-                            <li class="menuSubOption" ng-click="changeSort('starred', $event)">Priority</li>
-                            <li class="menuSubOption" ng-click="changeSort('status_id', $event)">Status</li>
-                            <li class="menuOption">
-                                <div class="optionText">
-                                    <div class="optionTitle">5 - day view</div>
-                                    <div class="optionDesc">Quick links to view tasks due for the next 5 days.</div>
-                                </div>
-                                <div class="optionToggle">
-                                    <input type="checkbox" ng-change="changeSettings(true)" ng-model="notedSettings.show_5_days" ng-model="notedSettings.show_5_days" class="catBox">
-                                </div>
-                            </li>
-                            <li class="menuOption">
-                                <div class="optionText">
-                                    <div class="optionTitle">Priority List</div>
-                                    <div class="optionDesc">Priority list which shows overdue tasks, tasks due today and due tomorrow.</div>
-                                </div>
-                                <div class="optionToggle">
-                                    <input type="checkbox" ng-change="changeSettings(true)" ng-model="notedSettings.show_priority_list" ng-model="notedSettings.show_priority_list" class="catBox">
-                                </div>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+            <div class="icon-container">
+                <img src="img/add.svg" class="menu-item" ng-click="go('/categories/:catid/notes/newnote', true)">
+                <img src="img/microphone.svg" ng-click="voiceAdd()" class="menu-item">
+                <img src="img/settings.svg" class="menu-item" ng-click="go('/settings', false)">
             </div>
         </div>
         <div ng-view class="contentDiv">
@@ -108,6 +56,8 @@
     <script src="js/controllers/CategoryController.js"></script>
     <script src="js/controllers/ListCatsController.js"></script>
     <script src="js/controllers/DayController.js"></script>
+    <script src="js/controllers/StatusController.js"></script>
+    <script src="js/controllers/SettingsController.js"></script>
 
     <!-- Directives -->
     <script src="js/directives/note.js"></script>
@@ -125,10 +75,6 @@
     <script src="js/services/calendar.js"></script>
 
     <script type="text/javascript" src="cordova.js"></script>
-    <script type="text/javascript">
-        //application shortcuts
 
-
-    </script>
     </body>
 </html>

@@ -1,21 +1,20 @@
 <a ng-href="#!/categories/{{info.categories_id}}/notes/{{info.note_id}}">
-    <div class="note noteList" ng-class="info.class" style="border-left: 10px solid {{info.category_colour}}">
+    <div class="note noteList" ng-class="info.complete ? ( settings.black_theme ? 'noteBlack' : 'noteWhite') : (info.class ? info.class : (settings.black_theme ? 'noteBlack' : 'noteWhite'))" style="border-left: 10px solid {{info.category_colour}}">
         <div class="noteText">
             {{info.title}}
         </div>
 
         <div class="iconBar">
-            <button class="btn btn-xs" ng-class="info.class_name" ng-click="changeStatus(info, $event)">
+            <button class="btn btn-xs" ng-class="info.class_name" ng-click="changeStatus({note: info, event: $event})">
                 {{info.status_name}}
             </button>
-            <img ng-src="{{info.starredImage}}" class="star_{{info.starred}}" width="20px" height="20px" ng-click="starItem(info, $event);"/>
-            <div class="starOverlay" ng-if="info.starred > 0" ng-click="starItem(info, $event);">{{info.starred}}</div>
-            <img ng-src="{{info.actionImage}}" width="20px" height="20px" ng-click="deleteItem(info, $event)"/>
+            <img ng-src="{{info.starredImage}}" class="star_{{info.starred}}" width="20px" height="20px" ng-click="starItem({note: info, event: $event});"/>
+            <div class="starOverlay" ng-if="info.starred > 0" ng-click="starItem({note: info, event: $event});">{{info.starred}}</div>
+            <img ng-src="{{info.actionImage}}" width="20px" height="20px" ng-click="deleteItem({note: info, event: $event})"/>
         </div>
 
-
         <div class="dateText">
-            {{info.date_due | newDate | date: "mediumDate"}}
+            {{info.date_due | newDate | date: "mediumDate"}} <button class="btn btn-primary btn-xxs" ng-if="info.parent_note_id">sub task</button>
         </div>
 
     </div>

@@ -1,0 +1,17 @@
+<div ng-show="loading" class="loadingScreen">
+    <div class="lds-ripple"><div></div><div></div></div>
+</div>
+<div ng-show="!loading">
+    <h4 class="status-header">Statuses</h4>
+    <div class="row justify-content-around">
+        <a href="#!/statustracker/status/{{status.status_id}}/notes?name={{status.status_name}}" class="col-5 btn {{status.class_name}} mb-3" ng-repeat="status in statuses">
+            {{status.status_name}} ({{status.noteCount}})
+        </a>
+    </div>
+    <h4 class="status-header">Priorities</h4>
+    <div class="row justify-content-around">
+        <a href="#!/statustracker/priority/{{priority.priorityID}}/notes" class="col-5 btn priority_button star_{{priority.priorityID}} mb-3" ng-repeat="priority in priorities">
+            Priority {{priority.priorityID}} ({{priority.noteCount}})
+        </a>
+    </div>
+</div>

@@ -35,13 +35,20 @@ app.controller('NewNoteController', function($scope, dbCall, $location, $routePa
                     return cat.category_id == $routeParams.catid
                 })[0]
             }
+            if($routeParams.parentnoteid){
+                $scope.note.parent_note_id = $routeParams.parentnoteid;
+            }
         });
     });
 
     $scope.submitNote = function(id){
         $scope.note.categories_id = ($scope.selectedCategory === undefined) ? null : $scope.selectedCategory.category_id;
         NoteService.addNote(id, $scope.note).then(function(data){
-            $location.path("/categories/" + $scope.note.categories_id + "/notes/")
+            if ($scope.note.parent_note_id){
+                $location.path("/categories/" + $scope.note.categories_id + "/notes/" + $scope.note.parent_note_id)
+            } else {
+                $location.path("/categories/" + $scope.note.categories_id + "/notes/")
+            }
         })
     };
 

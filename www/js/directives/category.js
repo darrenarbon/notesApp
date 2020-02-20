@@ -1,11 +1,13 @@
-app.directive('category', function() {
+app.directive('category', function($rootScope) {
     return {
         restrict: 'E',
         scope: {
             info: "=",
-            id: "="
+            id: "=",
+            settings: "=",
+            deleteCat: "&",
+            editCat: "&"
         },
-        templateUrl: 'js/directives/category.html',
-        controller: "ListCatsController"
+        templateUrl: 'js/directives/category.html'
     };
 });

@@ -1,0 +1,68 @@
+<div class="settingsOption">
+    <div class="optionTitle">Allow Notifications</div>
+    <div class="optionDesc">
+        <input type="checkbox" ng-model="localSettings.allow_notifications">
+        Automatically adds notifications when you set a due date.
+    </div>
+</div>
+
+<div class="settingsOption">
+    <div class="optionTitle">Calendar Integration</div>
+    <div class="optionDesc">
+        <input type="checkbox" ng-model="localSettings.allow_calendar_integration" ng-checked="localSettings.allow_calendar_integration">
+        Enable the option to add the note to the phones calendar.
+    </div>
+</div>
+
+<div class="settingsOption" ng-if="localSettings.allow_calendar_integration">
+    <div class="optionTitle">Add to Calendar</div>
+    <div class="optionDesc">
+        <input type="checkbox" ng-model="localSettings.add_to_calendar_default">
+        Set the 'add to calendar' option on the add new note page to on by default.
+    </div>
+</div>
+
+<div class="settingsOption">
+    <div class="optionTitle">Sort Notes By</div>
+    <div class="optionDesc">
+        <button class="btn btn-sm mr-3" ng-class="option.code == localSettings.sort_order ? 'btn-primary': 'btn-outline-primary'" ng-repeat="option in sortOrders" ng-click="changeSort(option)">
+            {{option.text}} {{ option.code == localSettings.sort_order ? (localSettings.sort_order_reverse ? '- ' + option.asc : '- ' + option.desc) : ''}}
+        </button>
+    </div>
+</div>
+
+<div class="settingsOption">
+    <div class="optionTitle">5 - day view - {{localSettings.show_5_days}}</div>
+    <div class="optionDesc">
+        <input type="checkbox" ng-model="localSettings.show_5_days">
+        Quick links to view tasks due for the next 5 days.
+    </div>
+</div>
+
+<div class="settingsOption">
+    <div class="optionTitle">Priority List</div>
+    <div class="optionDesc">
+        <input type="checkbox" ng-model="localSettings.show_priority_list">
+        Priority list which shows overdue tasks, tasks due today and due tomorrow.
+    </div>
+</div>
+
+<div class="settingsOption">
+    <div class="optionTitle">Status Tracker</div>
+    <div class="optionDesc">
+        <input type="checkbox" ng-model="localSettings.show_status_tracker">
+        View tasks by status or priority.
+    </div>
+</div>
+
+<div class="settingsOption">
+    <div class="optionTitle">Dark Theme</div>
+    <div class="optionDesc">
+        <input type="checkbox" ng-model="localSettings.black_theme">
+        Turn the dark theme on.
+    </div>
+</div>
+
+<div class="settingsButton">
+    <button class="btn btn-sm btn-primary" ng-click="changeSettings()">{{ saveText }}</button>
+</div>

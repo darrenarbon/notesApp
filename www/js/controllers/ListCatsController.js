@@ -1,5 +1,6 @@
-app.controller('ListCatsController', function($scope, $location, speech, NoteService, CalendarService, $rootScope) {
+app.controller('ListCatsController', function($scope, $location, speech, NoteService, CalendarService, $rootScope, $timeout) {
     $scope.categories = [];
+    $scope.loading = true;
 
     $scope.$on('SettingsLoaded', function() {
         loadData()
@@ -12,32 +13,40 @@ app.controller('ListCatsController', function($scope, $location, speech, NoteSer
     });
 
     function loadData(){
+        console.log("ListCatsController.loadData")
         NoteService.loadCategories(undefined, true).then(function(data){
             $scope.categories = data;
             if ($rootScope.notedSettings.show_5_days === true){
                 CalendarService.create5Days().then(function(data){
                     $scope.days = data;
+                    $timeout(function() {
+                        $scope.loading = false;
+                    },0);
                 })
             } else {
                 $scope.days = []
+                $timeout(function() {
+                    $scope.loading = false;
+                },0);
             }
         });
     }
 
     //delete an item
-    $scope.deleteCat = function(category, $event) {
+    $scope.deleteCat = function(cat, $event) {
+        console.log("hi")
         $event.stopPropagation();
         $event.preventDefault();
-        NoteService.deleteCategory(category).then(function(data){
-            category.expired = 1;
+        NoteService.deleteCategory(cat).then(function(data){
+            cat.expired = 1;
         })
     };
 
     //edit an item
-    $scope.editCat = function(category_id, $event) {
+    $scope.editCat = function(cat, $event) {
         $event.stopPropagation();
         $event.preventDefault();
-        $location.path("/categories/" + category_id + "/edit");
+        $location.path("/categories/" + cat.category_id + "/edit");
     };
 
     $scope.voiceAdd = function() {

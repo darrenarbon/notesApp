@@ -15,21 +15,22 @@ angular
 function filterNotes() {
     return function(data, showAll) {
         var returnedObjects = [];
-
-        if (showAll) {
-            data.forEach(function(obj) {
-                if (obj.complete === 1){
-                    returnedObjects.push(obj)
-                }
-            })
-            return returnedObjects
-        } else {
-            data.forEach(function(obj) {
-                if (obj.complete === 0){
-                    returnedObjects.push(obj)
-                }
-            })
-            return returnedObjects
+        if (data){
+            if (showAll) {
+                data.forEach(function(obj) {
+                    if (obj.complete === 1){
+                        returnedObjects.push(obj)
+                    }
+                });
+                return returnedObjects
+            } else {
+                data.forEach(function(obj) {
+                    if (obj.complete === 0){
+                        returnedObjects.push(obj)
+                    }
+                });
+                return returnedObjects
+            }
         }
     };
 }

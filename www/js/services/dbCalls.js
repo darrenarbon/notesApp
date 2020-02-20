@@ -93,6 +93,13 @@ app.service('dbCall', function ($http, $q) {
                 resolve(res)
             });
 
+            var prom18 = doDBTransaction("select * from status where status_name='Complete'", [], "status DB queried", "status DB unable to be queried").then(function (res) {
+                if (res.rows.length === 0) {
+                    doDBTransaction("INSERT INTO status (status_name, class_name) values(?,?)", ["Complete", "btn-info"], "status added to the DB", "status cannot be added to db");
+                }
+                resolve(res)
+            });
+
             //update the version number
             var prom13 = doDBTransaction("select * from version where version = ?", ["1.85"], "version number checked", "version number unable to be checked").then(function (res) {
                 if (res.rows.length === 0) {
@@ -100,7 +107,19 @@ app.service('dbCall', function ($http, $q) {
                 }
                 resolve(res)
             });
-            $q.all([prom1, prom2, prom3, prom4, prom5, prom6, prom7, prom8, prom9, prom10, prom11, prom12, prom13, prom14, prom15]).then(function(promises){
+
+            //version 2.0 database changes
+            var prom16 = doDBTransaction("ALTER TABLE notes add column parent_note_id integer", [], "parent_note_id added to notes table", "parent_note_id already in notes table");
+
+            //version 2.1 database changes
+            var prom17 = doDBTransaction("ALTER TABLE noted_settings add column show_status_tracker integer default(1)", [], "show_status_tracker added to settings table", "show_status_tracker already in settings table");
+            var prom18 = doDBTransaction("ALTER TABLE noted_settings add column black_theme integer default(0)", [], "black_theme added to settings table", "black_theme already in settings table");
+
+            //version 2.4 database changes
+            var prom19 = doDBTransaction("ALTER TABLE noted_settings add column sort_order text default('date_added_numeric')", [], "sort_order added to the settings table", "sort_order already in settings table");
+            var prom20 = doDBTransaction("ALTER TABLE noted_settings add column sort_order_reverse integer default(1)", [], "sort_order_reverse added to the settings table", "sort_order_reverse already in settings table");
+
+            $q.all([prom1, prom2, prom3, prom4, prom5, prom6, prom7, prom8, prom9, prom10, prom11, prom12, prom13, prom14, prom15, prom16, prom17, prom18, prom19, prom20]).then(function(promises){
                 resolve("All Done")
             })
         })
@@ -141,5 +160,40 @@ On the day view, the add by voice button auto adds that date
 Version 1.85 - 30th October
 Search notes either in the title or the notes body.
 5 priority levels as shown in the stars.
+
+Version 2.00 - 30th October
+Sub tasks. Can add subtasks to any task.
+In lists, only top level notes are shown
+When open note, sub tasks are then shown in the same way as the front page
+In priority or date, and note can be shown, subtasks will be highlighted as so
+List is now clickable so you can view all of that list.
+
+Version 2.1 - 30th October 2018
+Status Tracker - dashboard to show notes by status, priority
+Black Theme - Added very basic black theme
+
+Version 2.2 - 14th November 2019
+UI Redesign. Icons moved to top menu and top menu made smaller
+Screen Loader. Spinner to show whilst screen is loading to stop screen jumping about
+Status Tracker now returns the number of notes in each status, cannot click this yet though
+Settings Moved. Settings now have their own page where they are presented and a new icon on the top bar
+
+Version 2.3 - 14th November 2019
+Icon Fix - clicking on a star or priority in the notes list now functions correctly.
+Settings - Several issues with settings
+Status Tracker - clicking an icon opens that list
+
+Version 2.4 - 15th November 2019
+Settings - Sort by is fixed, also fixed smaller settings bugs
+
+Version 2.5 - 9th Jan 2020
+Bug Fix - Deleting or editing a category would not work.
+
+
+Version 2.x
+Speed improvements - ascertain why it takes so long to render
+Due Date & Times - settings to determine what is being set
+Add to calendar - In settings specify which calendar to add to.
+Repeated tasks - Does something need to repeat?
 
 */

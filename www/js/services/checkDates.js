@@ -1,5 +1,8 @@
 app.service('checkDates', function () {
     this.checkOverDue = function(date) {
+        if (date === null) {
+            return
+        }
         var now = new Date()
         date = new Date(date)
         if (now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth() && now.getDate() === date.getDate()) {

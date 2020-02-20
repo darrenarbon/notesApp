@@ -1,20 +1,14 @@
-<div class="catHeader">{{categoryName}}</div>
-<note ng-repeat="note in filtered = (notes | orderBy:orderByWhat : reverse | filterNotes: false) track by $index" info="note" id="note.note_id"></note>
-<div class="noNotesText" ng-if="filtered.length == 0">There are no notes here....</div>
-<div class="text-center mt-2" >
-    <button class="btn btn-success btn-sm" ng-click="showComp = !showComp" ng-show="categoryId">{{showComp?'Hide' : 'Show'}} Completed Tasks</button>
+<div ng-show="loading" class="loadingScreen">
+    <div class="lds-ripple"><div></div><div></div></div>
 </div>
-<div ng-show="showComp">
-    <note ng-repeat="note in filtered = (notes | orderBy:orderByWhat : reverse | filterNotes: true) track by $index" info="note" id="note.note_id"></note>
-</div>
-<div class="addNewButton" ng-if="categoryId">
-    <a ng-href="#!/categories/{{categoryId}}/notes/newnote">
-        <div class="plusSymbol">
-            +
-        </div>
-    </a>
-</div>
-
-<div class="voiceButton" data-ng-click="voiceAdd()" ng-if="categoryId">
-    <img src="img/microphone.png" class="voiceIcon">
+<div ng-show="!loading" >
+    <div class="catHeader">{{categoryName}}</div>
+    <note change-status="changeStatus(note, event)" star-item="starItem(note, event)" delete-item="deleteItem(note, event)" ng-repeat="note in filtered = (notes | orderBy:orderByWhat : reverse | filterNotes: false) track by $index" info="note" id="note.note_id" settings="notedSettings"></note>
+    <div class="noNotesText" ng-if="filtered.length == 0">There are no notes here....</div>
+    <div class="text-center mt-2" >
+        <button class="btn btn-success btn-sm" ng-click="showComp = !showComp" ng-show="categoryId">{{showComp?'Hide' : 'Show'}} Completed Tasks</button>
+    </div>
+    <div ng-show="showComp">
+        <note change-status="changeStatus(note, event)" star-item="starItem(note, event)" delete-item="deleteItem(note, event)" ng-repeat="note in filtered = (notes | orderBy:orderByWhat : reverse | filterNotes: true) track by $index" info="note" id="note.note_id" settings="notedSettings"></note>
+    </div>
 </div>

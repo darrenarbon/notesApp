@@ -1,4 +1,4 @@
-app.controller('HomeController', function($scope, menuOptions, $rootScope, dbCall, $location, NoteService) {
+app.controller('HomeController', function($scope, menuOptions, $route, speech, $location, NoteService) {
 
     //dbCall.add("notes", {title: "1 - New Note", notes: "Something great", categories_id: 1, complete: 0, status_id: 4}).then(function(response){
     //    console.log(response)
@@ -33,36 +33,6 @@ app.controller('HomeController', function($scope, menuOptions, $rootScope, dbCal
     //    console.log(result)
     //});
 
-    $rootScope.orderByWhat = "date_added_numeric";
-    $rootScope.reverse = false;
-
-    //function to change global variable based on the check box
-    $scope.changeSort = function(type, $event) {
-        var oMenuDivs = document.querySelectorAll(".menuSubOptionSelected");
-        if(oMenuDivs.length > 0){
-            oMenuDivs.forEach(function(oDiv){
-                oDiv.classList.remove("menuSubOptionSelected", "menuSubOptionAsc", "menuSubOptionDesc");
-            })
-        }
-        if (type === $rootScope.orderByWhat && $rootScope.reverse === false){
-            //same option so reverse the order
-            $rootScope.reverse = !$rootScope.reverse;
-            $event.target.classList.add("menuSubOptionDesc", "menuSubOptionSelected");
-        } else {
-            $rootScope.reverse = false;
-            $event.target.classList.add("menuSubOptionAsc", "menuSubOptionSelected");
-        }
-        $rootScope.orderByWhat = type;
-    };
-
-    $scope.changeSettings = function(reloadPage){
-        NoteService.saveSettings($rootScope.notedSettings).then(function(){
-            if(reloadPage === true){
-                $rootScope.$broadcast("SettingsLoaded")
-            }
-        });
-    };
-
     $scope.deleteCompNotes = function(){
         NoteService.deleteCompNotes().then(function(){
             console.log("completed notes deleted")
@@ -71,5 +41,28 @@ app.controller('HomeController', function($scope, menuOptions, $rootScope, dbCal
 
     $scope.searchNotes = function(){
         $location.path("/categories/search/notes").search({search: $scope.searchText})
+    }
+
+    $scope.voiceAdd = function() {
+        speech.getNote().then(function(data){
+            NoteService.addNote(undefined, data).then(function(data){
+                $scope.loadNotes();
+            })
+        })
+    };
+
+    $scope.go = function(path, edit) {
+        defaults = {
+            catid: -1
+        }
+        if (edit) {
+            Object.keys($route.current.params).forEach(key => {
+                path = path.replace(':' + key, $route.current.params[key])
+            })
+            Object.keys(defaults).forEach(key => {
+                path = path.replace(':' + key, defaults[key])
+            })
+        }
+        $location.path(path)
     }
 });

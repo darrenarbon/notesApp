@@ -1,15 +1,8 @@
-<div class="catHeader">{{currentDay | date: "mediumDate"}}</div>
-<note ng-repeat="note in filtered = (notes | orderBy:orderByWhat : reverse)" info="note" id="note.note_id" ng-model="showAllItemsInDisplay"></note>
-<div class="noNotesText" ng-if="filtered.length == 0">There are no notes here....</div>
-
-<div class="addNewButton">
-    <a ng-href="#!/categories/-1/notes/newnote?day={{ currentDay }}">
-        <div class="plusSymbol">
-            +
-        </div>
-    </a>
+<div ng-show="loading" class="loadingScreen">
+    <div class="lds-ripple"><div></div><div></div></div>
 </div>
-
-<div class="voiceButton" data-ng-click="voiceAdd({date_due: currentDay})">
-    <img src="img/microphone.png" class="voiceIcon">
+<div ng-show="!loading">
+    <div class="catHeader">{{currentDay | date: "mediumDate"}}</div>
+    <note ng-repeat="note in filtered = (notes | orderBy:orderByWhat : reverse | filterNotes: false)" info="note" id="note.note_id"></note>
+    <div class="noNotesText" ng-if="filtered.length == 0">There are no notes here....</div>
 </div>

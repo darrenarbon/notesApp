@@ -1,6 +1,12 @@
-<div class="row justify-content-around ml-1 mr-1">
+<div ng-show="loading" class="loadingScreen">
+    <div class="lds-ripple"><div></div><div></div></div>
+</div>
+<div ng-show="!loading" class="row justify-content-around ml-1 mr-1">
     <div class="col-2 text-center dateBox" style="background-color: {{day.colour}}"  ng-repeat="day in days">
         <a class="dateTile" ng-href="#!/day/{{$index}}">
+            <div class="dateMonth">
+                {{day.fullDate | date : "EEE"}}
+            </div>
             <div class="dateDay">
                 {{day.date}}
             </div>
@@ -18,24 +24,5 @@
         </a>
     </div>
 </div>
-<category ng-repeat="category in categories track by category.category_id" ng-if="category.expired != 1" info="category" id="category.category_id"></category>
-<div class="addNewButton addNewSwitcher">
-    <div class="plusSymbol">+</div>
-    <div class="twoLinks">
-        <div class="twoLinks--oneLink">
-            <a href="#!/categories/new">
-                <div class="oneLinkHead">NEW</div>
-                <div class="oneLinkContent">list</div>
-            </a>
-        </div>
-        <div class="twoLinks--oneLink">
-            <a href="#!/categories/-1/notes/newnote">
-                <div class="oneLinkHead">NEW</div>
-                <div class="oneLinkContent">note</div>
-            </a>
-        </div>
-    </div>
-</div>
-<div class="voiceButton" data-ng-click="voiceAdd()">
-    <img src="img/microphone.png" class="voiceIcon">
-</div>
+<category ng-show="!loading" ng-repeat="category in categories track by category.category_id" ng-if="category.expired != 1" info="category" id="category.category_id" settings="notedSettings" delete-cat="deleteCat(cat, event)" edit-cat="editCat(cat, event)"></category>
+<a ng-show="!loading" href="#!/categories/new" class="new-list"><span class="new-list-plus">+</span> New List</a>
